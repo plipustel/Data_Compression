@@ -1,0 +1,4472 @@
+BAB 1
+
+PENDAHULUAN
+
+
+
+1.1	Latar Belakang
+
+Perkembangan teknologi informasi cenderung mempengaruhi semakin besarnya data atau informasi yang harus diproses atau disimpan, sementara media penyimpanan sangat terbatas. Hal ini disebabkan data dalam bentuk elektronis lebih disukai daripada dalam bentuk konvensional, karena beberapa faktor tertentu seperti masalah keamanan data, kemudahan dalam pemrosesan, pendistribusian maupun modifikasi data. Dalam hal transmisi data, besarnya ukuran data (file) daripada bandwidth juga turut menjadi masalah yang serius, karena memperlambat sampainya data ke tujuan. Sedangkan dalam proses upload dan download juga akan semakin memakan waktu. Sehingga komputer tidak dapat digunakan nutuk kebutuhan lain secara maksimal, karena harus selalu berhadapan dengan masalah besarnya ukuran data.
+
+Maka, salah satu alternatif yang digunakan untuk mengatasi masalah di atas adalah dengan melakukan kompresi data sehingga ukurannya menjadi lebih kecil dari ukuran semula, dimana data yang dimaksudkan bisa berupa file teks, gambar, suara maupun video. Untuk melakukan kompresi data, telah banyak algoritma yang dikembangkan dengan teknik pengompresian yang berbeda-beda, namun sayang sekali tidak ada satupun algoritma kompresi tersebut yang baik untuk mengompresi berbagai tipe file, hal ini disebabkan karena karakteristik atau struktur setiap file berbeda-beda, sedangkan kebanyakan algoritma kompresi data memanfaatkan struktur file tersebut dalam proses kompresi, akibatnya hanya pada file tertentu saja mungkin suatu algoritma lebih efektif dari yang lainnya. 
+
+Untuk itu, dalam penelitian ini penulis akan membandingkan tiga algoritma kompresi data, yaitu Lempel Ziv Welch (LZW), Arithmetic Coding, dan Run-Length Encoding (RLE). Algoritma-algoritma ini dipilih karena algoritma tersebut bersifat lossless dan umumnya digunakan pada file-file teks, dimana dua algoritma pertama merupakan perwakilan dan pengembangan dari masing-masing kategori kompresi dengan teknik pengkodean yang berbeda, dimana LZW adalah algoritma kompresi berbasis dictionary yang merupakan pengembangan dari algoritma Lempel Ziv 77 (LZ77) dan Lempel Ziv 78 (LZ78). Arithmetic Coding adalah algoritma berbasis entropy yang bahkan telah berhasil menggantikan algoritma Huffman Coding. Sedangkan algoritma RLE memiliki teknik pengkodean yang berbeda dari kedua algoritma di atas. Algoritma RLE adalah algoritma yang memanfaatkan deretan karakter yang sama secara berurutan. Namun, pada kenyataanya file teks jarang memiliki deretan karakter yang sama secara berurutan, sehingga algoritma ini sebenarnya kurang efektif digunakan untuk mengompresi file teks. Untuk itu, dibutuhkan suatu algoritma yang akan mentransformasikan data teks terlebih dahulu ke bentuk lain yang lebih mudah dikompresi oleh algoritma RLE. Dalam penelitian ini, algoritma transformasi yang dibahas adalah algoritma Burrows-Wheeler Transform (BWT). Sehingga algoritma RLE akan menjadi lebih efektif dan memiliki daya saing dengan algoritma LZW maupun dengan algoritma Arithmetic Coding. Algoritma-algoritma ini hanya akan diimplementasikan untuk mengompresi file teks saja, karena file teks merupakan salah satu file yang sangat umum dan banyak digunakan dalam masyarakat.
+
+Untuk menentukan algoritma yang lebih optimal dalam mengompresi file teks, maka parameter yang digunakan untuk analisis perbandingan algoritma ini adalah kompleksitas algoritma yang dihitung menggunakan Big-O, waktu yang dibutuhkan selama proses kompresi dan dekompresi, dan rasio kompresi.
+
+
+1.2	Rumusan Masalah
+
+Berdasarkan latar belakang di atas, maka dapat dirumuskan masalah-masalah sebagai berikut:
+
+1.	Bagaimana algoritma-algoritma tersebut melakukan encoding dan decoding dalam proses kompresi dan dekompresi file teks serta mengaplikasikanya ke dalam program komputer.
+2.	Bagaimana perbandingan algoritma LZW, Arithmetic Coding dan RLE dilihat dari segi kompleksitas algoritma.
+
+3.	Algoritma mana yang lebih optimal untuk kompresi file teks berdasarkan rasio kompresi dan kecepatan selama proses kompresi dan dekompresi.
+
+
+
+1.3	Batasan Masalah
+
+Agar penelitian ini lebih fokus dan terarah, maka penulis membatasi pembahasan masalah sebagai berikut:
+
+1.	Algoritma yang akan dibahas dalam penelitian ini adalah LZW, Arithmetic Coding, dan RLE untuk menemukan perbandingannya.
+2.	Algoritma RLE akan dibantu oleh BWT, agar algoritma tersebut lebih efektif. 
+3.	File uji yang akan digunakan untuk kompresi adalah tipe file plain text ASCII (*.txt). 
+4.	Parameter yang akan digunakan untuk analisis perbandingan setiap algoritma adalah kompleksitas algoritma (diukur dengan notasi Big-O), waktu yang dibutuhkan untuk proses kompresi atau dekompresi, dan  ratio kompresi.
+5.	Bahasa pemrograman yang digunakan untuk implementasi algoritma adalah Borland Delphi 7.0.
+
+
+1.4	Tujuan Penelitian
+
+Adapun yang menjadi tujuan dari penelitian ini adalah:
+
+1.	Untuk menganalisis kompleksitas dari setiap algoritma sehingga dapat diketahui perbandingan kompleksitas setiap algoritma dalam proses kompresi dan dekompresi file teks.
+2.	Untuk membuat perangkat lunak yang mengimplementasikan algoritma LZW, Arithmetic Coding, dan RLE+BWT sehingga dapat dilakukan analisis statistik untuk menemukan perbandingan setiap algoritma berdasarkan kecepatan kompresi atau dekompresi, dan rasio kompresi. 
+3.	Dengan tercapainya tujuan pada poin 1 dan 2, maka akan dapat diketahui algoritma mana yang lebih efektif untuk kompresi file teks.
+
+
+1.5	Manfaat Penelitian
+
+Manfaat yang dapat diambil dari penelitian ini adalah penelitian ini diharapkan dapat membantu para implementer kompresi data untuk memilih algoritma yang lebih optimal untuk kompresi file teks dengan mempertimbangkan parameter-parameter dari setiap algoritma yang dibandingkan. Selain itu, dari penelitian ini juga dapat diketahui cara kerja serta kekurangan dan kelebihan setiap algoritma, sehingga dapat menjadi konsep dasar untuk perancangan atau pengembangan algoritma kompresi data.
+
+
+1.6	Diagram Konsepsi
+
+
+ 
+
+Gambar 1.1 Diagram Konsepsi
+1.7	Metodologi Penelitian
+
+
+Metode-metode yang akan digunakan dalam penelitian ini adalah:
+
+1.	Studi Literatur
+Pada tahap ini, penulis mengumpulkan dan mempelajari segala informasi yang berhubungan dengan penelitian ini, seperti teori-teori tentang algoritma kompresi data dan teori lainnya yang bersumber dari buku, artikel, jurnal, makalah, maupun situs-situs internet. 
+
+2.	Perancangan Sistem
+Pada tahap ini akan dilakukan perancangan sistem berupa desain interface dan struktur program yang akan digunakan untuk implementasi setiap algoritma. Selain itu dilakukan juga analisis setiap algoritma berupa penghitungan kompleksitas setiap algoritma.
+
+3.	Implementasi Sistem
+Sistem yang telah dirancang akan diimplementasikan ke dalam bentuk perangkat lunak dengan menggunakan pemrograman Borland Delphi 7.0.
+
+4.	Pengujian dan Analisis Sistem
+Sistem yang telah jadi akan diuji untuk melihat apakah sistem tersebut mengalami kesalahan atau tidak. Perbaikan akan dilakukan sekiranya pada sistem terdapat kesalahan. Selain itu akan dilakukan juga analisis untuk menemukan perbandingan setiap algoritma.
+
+5.	Dokumentasi sistem
+Penulisan laporan Tugas Akhir dengan analisis yang telah diperoleh.
+
+
+
+
+
+
+
+1.8	Sistematika Penulisan
+
+
+Sistematika penulisan dari skripsi ini terdiri dari beberapa bagian utama sebagai berikut:
+
+BAB I : PENDAHULUAN
+Bab ini menjelaskan mengenai latar belakang masalah pemilihan judul, rumusan masalah, batasan masalah, tujuan penelitian, manfaat penelitian, metodologi penelitian, dan sistematika penulisan skripsi.
+
+BAB II : LANDASAN TEORI
+
+Bab ini membahas mengenai dasar teori tentang algoritma kompresi LZW, Arithmetic Coding, RLE, transformasi BWT, dan teori Big-O yang digunakan untuk membandingkan kompleksitas setiap algoritma.
+
+BAB III : PERANCANGAN DAN IMPLEMENTASI SISTEM 
+Bab ini menguraikan tentang perancangan sistem yang meliputi perancangan setiap algoritma serta analisis untuk menentukan kompleksitasnya, dan interface sistem. Kemudian hasil rancangan tersebut akan diimplementasikan dengan bahasa pemrograman Borland Delphi.
+
+BAB IV : ANALISIS DAN PENGUJIAN SISTEM
+Bab ini berisi tentang pengujian sistem yang telah diimplementasikan sekaligus melakukan analisis perbandingan kinerja setiap algoritma.
+ 
+BAB V. KESIMPULAN DAN SARAN
+Bab ini berisi kesimpulan dari uraian bab-bab sebelumnya dan hasil penelitian yang diperoleh, serta saran-saran yang diharapkan dapat bermanfaat untuk pengembangan selanjutnya.
+ 
+
+BAB 2
+
+LANDASAN TEORI
+
+
+
+Pada bab ini akan dibahas dasar teori tentang kompresi data dan algoritma kompresi Lempel Ziv Welch (LZW), Arithemtic Coding, Run-Length Encoding (RLE), dan Burrows-Wheeler Transform (BWT). Kemudian akan dijelaskan pula tentang file uji yang akan digunakan dalam penelitian ini disertai dengan teori penghitungan kompleksitas algoritma dengan  Big-O.
+
+
+2.1 Kompresi Data
+
+Kompresi  data  merupakan  cabang  ilmu  komputer  yang  bersumber  dari  teori informasi.  Teori  informasi  sendiri  dipelopori oleh Claude Shannon sekitar tahun 1940-an. Teori ini mendefenisikan jumlah informasi di dalam pesan sebagai jumlah minimum bit yang dibutuhkan yang dikenal sebagai entropy. Teori ini juga memfokuskan  pada  berbagai metode  tentang  informasi  termasuk tentang redundancy (informasi tak berguna) pada suatu pesan dimana semakin  banyak  redundancy maka semakin  besar pula ukuran pesan, upaya mengurangi redundancy inilah yang akhirnya melahirkan subjek ilmu tentang kompresi data.
+
+Menurut David Salomon (2007, hal:2) data kompresi adalah proses pengkonversian input data stream (sumber stream, atau data mentah asli) ke bentuk stream lain (output stream, atau stream yang sudah terkompresi) yang memiliki ukuran yang lebih kecil. Stream adalah sebuah file ataupun buffer dalam memory. Sedangkan menurut Ida Mengyi Pu (2006, hal: 1) kompresi data adalah konteks dari ilmu komputer, ilmu (dan seni) yang menyajikan informasi ke dalam bentuk yang compact. Pada umumnya data kompresi terdiri dari pengambilan stream simbol dan mengubahnya ke dalam bentuk kode. Jika kompresi efektif, hasil kode stream akan lebih kecil daripada simbol asli (Mark Nelson, 2007).
+Namun pada dasarnya data kompresi bertujuan untuk mengubah ukuran data menjadi lebih kecil dari ukuran semula sehingga dapat menghemat media penyimpanan dan waktu untuk transmisi data, dimana kompresi data dapat diterapkan terhadap data teks, gambar (JPG, JPEG, PNG, TIFF, GIFF), audio (MP3, AAC, RMA, WMA), dan video (MPEG, H261, H263).
+
+Untuk melakukan kompresi data telah banyak algoritma yang telah dikembangkan. Namun, secara umum algoritma kompresi data dapat di bagi menjadi dua kelompok besar berdasarkan dapat tidaknya rekontuksi ke data asli dilakukan yaitu:
+
+1.	Kompresi Lossless 
+Kompresi lossless adalah kompresi yang menjaga keakuratan data dimana perubahan atau hilangnya informasi bahkan beberapa bit saja pada data selama proses kompresi tidak bisa ditoleransi. Sehingga teknik kompresi ini bersifat reversible yaitu hasil kompresi bisa dikembalikan ke bentuk semula. Teknik ini lebih cocok diaplikasikan pada file database, teks, gambar medis, atau photo hasil satelit dimana hilangnya beberapa detail pada data dapat berakibat fatal. Contoh algoritma kompresi lossless adalah LZW, Arithmetic Coding, Huffman Coding, Dynamic Markov Compression (DMC), dan lain-lain.
+
+2.	Kompresi Lossy
+Pada kompresi lossy perubahan atau hilangnya beberapa informasi atau bit pada data bisa ditoleransi, sehingga hasil kompresi tidak bisa lagi dikembalikan ke bentuk semula (irreversible). Namun, hasil kompresi masih bisa mempertahankan informasi utama pada data. Kompresi ini cocok diaplikasikan pada file suara, gambar atau video.  Umumnya teknik ini menghasilkan kualitas hasil kompresi yang rendah, namun rasio kompresinya cenderung tinggi. Contoh algoritma kompresi lossy adalah Fractal Compression, Wavelet Compression, Wyner-Ziv Coding (WZC), dan lain-lain.
+
+
+
+2.2 Algoritma Lempel Ziv Welch (LZW)
+
+Algoritma LZW merupakan algoritma kompresi data lossless yang ditemukan oleh Terry Welch, dimana algoritma ini merupakan peningkatan dari versi sebelumnya yaitu algoritma Lempel Ziv 77 (LZ77) dan Lempel Ziv 78 (LZ78) yang dikembangkan oleh Abraham Lempel dan  Jacob Ziv pada tahun 1977 dan 1978. Kemudian algoritma LZW dipublikasikan oleh Terry Welch pada tahun 1984.
+
+Algoritma LZW adalah algoritma yang bersifat adaptif dan berbasis dictionary, dimana selama proses kompresi atau dekompresi berlangsung algoritma ini menggunakan sebuah dictionary yang dibentuk selama pembacaan input stream. Dictionary dibentuk dengan tujuan untuk menyimpan karakter atau pola string tertentu yang berguna untuk mengkodekan simbol atau string pada input stream yang merujuk pada index dalam dictionary. Sebelum proses kompresi atau dekompresi dimulai, sebuah dictionary akan diinisialisasi dengan simbol atau karakter-karakter dasar penyusun input stream, sehingga nilai default sebuah dictionary akan berisi 256 karakter ASCII dengan index 0-255. Sehingga pada awal pembacaan proses encoding maupun decoding, karakter atau kode pertama akan selalu ditemukan pada dictionary. 
+
+Tabel 2.1 Algoritma Dasar LZW Encoding
+Step 1:
+
+Step 2:
+Step 3:
+Step 4:
+Step 4a:
+Step 4b:
+Step 4c:
+Step 4d:
+Step 4e:
+Step 4f:
+Step 4g:
+Step 4h:
+Step 4i:
+Step 4j:
+Step 4k:
+Step 5:
+Step 6:	Dictionary terlebih dahulu diinisialisasi dengan karakter ASCII
+CurrentChars ? Karakter pertama dari input stream
+DictIndex ? 255 
+while not EOF character do begin
+    NextChar ? Karakter selanjutnya dari CurrentChars
+    ConcatStr ? CurrentChars + NextChar
+    if ConcatStr ada pada Dictionary then begin
+          CurrentChars ? ConcatStr
+    end else begin
+          Output ? Index dari CurrentChars pada   
+          dictionary
+          Isi ke dalam Dictionary (DictIndex, ConcatStr)
+          DictIndex ? DictIndex + 1
+          CurrentChars ? NextChar
+    end
+end
+EncodedStream ? Output
+
+Sebagai contoh, jika input stream: “BABAABAAAA” dikompresi dengan algoritma LZW, maka prosesnya dapat dilihat pada tabel 1 berikut:
+                    Tabel 2.2 Contoh Proses Encoding String “BABAABAAAA”
+Prefix P	Char C	String P+C
+di dalam dictionary?	Output
+(Codeword)	[Index]
+Entry Baru
+“B”	 “A”	             Tidak	           66	         [256]
+         “BA”
+“A”	“B”	             Tidak	     65	   [257]
+   “AB”
+    “B”	    “A”	         Ya	      -	       -
+   “BA”	“A”	       Tidak	          256	   [258]
+“BAA”
+    “A”	“B”	         Ya	      -	       -
+  “AB”	“A”	       Tidak	    257	   [259]
+ “ABA”
+   “A”	“A”	       Tidak	     65	   [260]
+   “AA”
+   “A”	“A”	         Ya	       -	       -
+ “AA”	“A”	       Tidak	    260	   [261]
+ “AAA”
+   “A” 	EOF	           -	     65	       -
+
+Maka hasil kompresi input stream “BABAABAAAA” adalah kumpulan angka pada kolom output pada Tabel 1, yaitu 66, 65, 256, 257, 65, 260, 65. Input stream sebelum kompresi adalah 10 x 8 = 80 bit, apabila kumpulan angka tersebut diubah ke dalam bentuk codeword dengan panjang 9 bit maka hasil kompresi menjadi 7 x 9 = 63 bit, sehingga terjadi penghematan sebesar 80 - 63 = 17 bit. 
+
+Proses decoding algoritma LZW hampir sama dengan proses encoding, yaitu dengan menginisialisasi terlebih dahulu dictionary dengan 0-255 index pertama dari karakter ASCII. Namun, pada decoding yang dibaca adalah kumpulan kode (angka) hasil kompresi. Selama proses pembacaan kode berlangsung, pada saat itu pula dilakukan pembentukan isi dictionary yang menjadi refrensi untuk pembentukan string asli. 
+
+Tidak seperti encoding, pada decoding isi dictionary selalu ditambahkan setiap pembacaan codeword, hal inilah yang memnungkinkan string asli dapat dikembalikan.
+Tabel 2.3 Algoritma Dasar LZW Decoding
+    Step 1:
+
+Step 2:
+Step 3:
+Step 4:
+Step 5:
+
+Step 6:
+Step 6a:
+
+Step 6b:
+Step 6c:
+Step 6d:
+Step 6e:
+Step 6f:
+
+Step 6g:
+Step 6h:
+Step 6i:
+
+Step 6j:
+Step 6k:
+Step 7:
+Step 8:	Dictionary terlebih dahulu diinisialisasi dengan karakter ASCII
+PreviousCodeWord ? Codeword pertama dari encoded stream
+String ? toString(PreviousCodeWord); 
+Char ? toChar(first input codeword); 
+DictIndex ? 256;
+
+while NOT EOF encoded stream
+    CurrentCodeWord ? codeword selanjutnya pada encoded 
+    stream
+    if CurrentCodeWord ada pada Dictionary then begin
+       String ? toString(CurrentCodeWord)
+    end else begin
+       String ? toString(PreviousCodeWord) + Char
+    end;
+
+    Output ? Output + String;
+    Char ? Karakter pertama dari string sekarang
+    insertToDictionary(DictIndex,
+                       toString(PreviousCodeWord) + Char;
+    PreviousCodeWord ? CurrentCodeWord;
+    DictIndex++;
+end
+DecodedStream ? Output
+
+
+Sebagai contoh, jika kode: “66, 65, 256, 257, 65, 260, 65” didekompresi dengan algoritma LZW, maka prosesnya dapat dilihat seperti table di bawah ini:
+
+Tabel 2.4 Contoh Proses Decoding dari Encoded String “BABAABAAAA”
+No	Previous
+Codeword	Current
+Codeword	Output (string)	First Char of
+String	Current Codeword
+di dalam  dictionary?	[Index]
+Entry Baru
+1	66	-	“B”	-	-	-
+2	66	65	“A”	“A”	Ya	[256] BA
+3	65	256	“BA”	“B”	Ya	[257] AB
+4	256	257	“AB”	“A”	Ya	[258] BAA
+5	257	65	“A”	“A”	Ya	[259] ABA
+6	65	260	“AA”	“A”	     Tidak	[260] AA
+7	260	65	“A”	“A”	Ya	[261] AAA
+
+Hasil dekompresi dari tabel 2 di atas adalah kumpulan karakter atau string pada kolom output yaitu “BABAABAAAA”. Pada baris pertama dari table 2 di atas terlihat bahwa tidak ada penambahan apa-apa pada dictionary, karena inisialisiasi awal dari decoding adalah menerjemahkan langsung kode pertama dari stream kode, hal ini dilakukan karena kode tersebut selalu dapat dipastikan ada dalam dictionary, karena sebelumnya dictionary telah diisi dengan 0-255 index pertama yang berisi karakter ASCII.
+
+
+2.3 Algoritma Arithmetic Coding
+
+Pada umumnya algoritma kompresi data melakukan teknik pengkodean dengan penggantian satu atau beberapa simbol yang sama dengan kode tertentu, berbeda dengan Arithmetic Coding, algoritma ini mengkodekan seluruh input stream dalam suatu file dengan sebuah angka floating point  dengan interval [0,1) atau angka yang lebih besar atau sama dengan 0 dan lebih kecil dari 1 ( 0 = x < 1). 
+
+Arithmetic Coding memiliki sejarah yang penting karena pada saat itu algoritma ini berhasil menggantikan algoritma Huffman selama 25 tahun, Arithmetic Coding memiliki perfomansi yang lebih unggul daripada Huffman Coding khususnya apabila diaplikasikan pada kumpulan alphabet yang ukurannya relatif kecil, awalnya Arithmetic Coding diperkenalkan oleh Shannon Fano dan Elias, kemudian dikembangkan secara luas oleh Pasco (1976), Rissanene (1976, 1984), dan Langdon (1984), yaitu sebagai ide alternatif yang menggantikan setiap input simbol dengan sebuah codeword, yaitu dengan mengkodekan seluruh input stream dengan sebuah single floating point sebagai output proses kompresi. (Pu, 2006).
+
+Untuk melakukan proses kompresi maupun dekompresi, Arithmetic Coding membutuhkan dua fase, yaitu dengan terlebih dahulu menentukan probalitas dan range setiap simbol lalu melakukan proses encoding maupuan decoding berdasarkan informasi probalitas tersebut.
+
+Jika sekumpulan simbol S pada pesan M = (S1, S2, S3,…SN) dengan probalitas P = (P1, P2, P3,…PN) dimana ?p = 1, akan dapat diperoleh subinterval yang unik untuk setiap simbol S yang berada pada interval [0, 1), yaitu:
+S1 = [0, P1)
+S2 = [P1, P1 + P2 )
+S3 = [P1 + P2, P1 + P2 + P3)
+…
+SN = [P1 + P2 + P3 + ...+ PN – 1, P1 + P2 + P3 + … + PN)
+
+Misalnya, untuk string “LOSSLESS”, maka akan dapat diperoleh probalitas dan range setiap s imbol seperti pada tabel 2 berikut:
+
+
+       Tabel 2.5 Contoh Range String “LOSSLESS”
+Simbol	Probalitas	Range
+E	1/8	0.000 – 0.125
+L	2/8	0.125 – 0.375
+O	1/8	0.375 – 0.500
+S	4/8	0.500 – 1.000
+
+
+Untuk proses encoding maupun decoding informasi pada tabel 2.5 mutlak diperlukan untuk meperoleh codeword maupun pada saat pembentukan pesan asli. Dalam pembuatan probalitas, tidak ada ketentuan urutan-urutan penentuan segmen/karakter, asalkan antara encoder dan decoder melakukan hal yang sama.
+
+Proses encoding dari algoritma Arithmetic Coding dimulai dengan membaca satu byte dalam satu waktu, lalu memberinya sebuah angka floating point batas bawah low dan batas atas high secara unik, nilai low dan high selalu dipertahankan untuk menentukan nilai low dan high simbol berikutnya. Proses pembacaan simbol dilakukan secara terus-menerus sampai tidak ada lagi simbol yang tersisa. Hasil kompresi adalah sebarang nilai antara interval low dan high dari simbol yang terakhir diproses, namun yang lebih sering digunakan adalah nilai low. Algoritma dasar Arithmetic Coding Encoding dapat dilihat pada tabel 2.6 berikut:
+
+Tabel 2.6 Algoritma Dasar Arithmetic Coding Encoding
+Step 1:
+Step 2:
+Step 3:
+Step 3a:
+Step 3b:
+Step 3c:
+Step 3d: 
+Step 4:
+Step 5:	Low  ? 0.0
+High ? 1.0
+while karakter masih ada dalam input stream do begin
+   CurrentSymbol ? Symbol
+   CodeRange ? High – Low
+   High  ? Low + CodeRange * HighRange(CurrentSymbol)
+   Low   ? Low + CodeRange * LowRange(CurrentSymbol)
+end while
+EncodedStream ? [Low, High)
+
+Sebagai contoh, apabila string “BILL_GATES” di-encoding dengan menggunakan algoritma encoding pada tabel 2.6, maka proses pertama yang harus dilakukan adalah menentukan terlebih dahulu probalitas dan range masing-masing simbol. Probalitas dan range simbol untuk string “BILL_GATES” dapat dilihat tabel 2.7 berikut.
+
+          Tabel 2.7 Probalitas dan Range String “BILL_GATES”
+Simbol	Probalitas	Range
+_	1/10	0.00 – 0.10
+A	1/10	0.10 – 0.20
+B	1/10	0.20 – 0.30
+E	1/10	0.30 – 0.40
+G	1/10	0.40 – 0.50
+I	1/10	0.50 – 0.60
+L	2/10	0.60 – 0.80
+S	1/10	0.80 – 0.90
+T	1/10	0.90 – 1.00
+
+Pada tabel 2.7, yang perlu diketahui adalah bahwa tiap karakter melingkupi range yang telah disebutkan kecuali bilangan yang tertinggi. Jadi karakter ’T’ sesungguhnya mempunyai range mulai dari 0.90 – 0.99...
+
+ 	  Setelah probalitas dan range setiap simbol diketahui, maka proses selanjutnya adalah melakukan encoding. Proses pertama yang dilakukan adalah membaca karakter pertama dari string ‘BILL_GATES’ yaitu karakter ‘B’, CodeRange = 1.00 – 0.00 = 1.00, HighRange(B) = 0.30, LowRange(B) = 0.20. Sehingga diperoleh:
+High = Low + CodeRange * HighRange(B) = 0.00 + 1.00 * 0.30 = 0.30
+Low = Low + CodeRange * LowRange(B) = 0.00 + 1.00 * 0.20 = 0.20
+
+Proses selanjutnya membaca karakter kedua yaitu karakter ‘I’, CodeRange = 0.30 - 0.20 = 0.10, HighRange(I) =0.60, LowRange(I)=0.50. Sehingga diperoleh:
+
+High = Low + CodeRange* HighRange(I) = 0.20 + 0.10 * 0.60 = 0.260
+Low = Low + CodeRange * LowRange(I) = 0.20 + 0.10 * 0.50 = 0.250
+
+Dan seterusnya sehingga diperoleh hasil seperti pada tabel 2.8 berikut:
+	
+Tabel 2.8 Proses Encoding String “BILL_GATES”
+
+Simbol	Low	High	Code_Range
+	0.00	1.00	1.00
+B	0.20	0.30	0.10
+I	0.250	0.260	0.010
+L	0.2560	0.2580	0.0020
+L	0.25720	0.25760	0.00040
+_	0.257200	0.257240	0.000040
+G	0.2572160	0.2572200	0.0000040
+A	0.25721640	0.25721680	0.00000040
+T	0.257216760	0.25721680	0.000000040
+E	0.2572167720	0.2572167760	0.0000000040
+S	0.25721677520	0.25721677560	0.00000000040
+
+
+
+Gambar 1.1 Nilai Interval String ”BILL_GATES”
+
+
+
+
+
+
+
+
+
+
+
+Nilai akhir proses encoding adalah low = 0.25721677520 dan high = 0.25721677560. Jadi, nilai yang akan mengkodekan string ”BILL_GATES” adalah sebarang nilai yang berada pada interval [low, high). 
+
+Pada decoding, yang dilakukan adalah mencari simbol yang melingkupi kode yang sedang dicari. Sebagai contoh, apabila angka (kode simbol) adalah 0.41938, maka simbol yang melingkupi range tersebut adalah karakter “G”, sedangkan kode simbol 0.938 adalah karakter “T" dan seterusnya. Sesaat setelah simbol ditemukan maka range dari simbol sekarang kemudian di-update untuk menghilangkan efek dari range simbol sebelumnya. Algoritma Arithmetic Coding decoding selengkapnya diperlihatkan pada tabel 2.9 berikut.
+
+Tabel 2.9 Algoritma Dasar Arithmetic Coding Decoding
+Step 1:
+Step 2:
+Step 3:
+Step 4:
+Step 4a:
+Step 4b:
+Step 4c: 
+Step 4d:
+Step 5:	Low  ? 0.0
+High ? 1.0
+Ambil Code
+Do
+   Cari simbol yang yang berkorespodensi dengan Code
+   CodeRange ? High – Low
+   Code ? Code – Low
+   Code ? Code/CodeRange
+until Simbol = EOF
+ 
+Dengan menggunakan algoritma pada tabel 2.9 maka kode 0.25721677520 dapat di-decoding menjadi string “BILL_GATES” seperti diperlihatkan pada tabel 2.10 berikut.
+
+                          Tabel 2.10 Proses Decoding String “BILL_GATES”
+Code	Symbol	Low Range
+Symbol	High Range
+Symbol	Code
+Range
+0.2572167752	B	0.2	0.3	0.1
+0.572167752	I	0.5	0.6	0.1
+0.72167752	L	0.6	0.8	0.2
+0.6083876	L	0.6	0.8	0.2
+0.041938	_	0.0	0.1	0.1
+0.41938	G	0.4	0.5	0.1
+0.1938	A	0.2	0.3	0.1
+0.938	T	0.9	1.0	0.1
+0.38	E	0.3	0.4	0.1
+0.8	S	0.8	0.9	0.1
+0.0				
+
+Pada prakteknya, algoritma Arithmetic Coding seperti yang dijelaskan sebelumnya adalah kurang efektif karena sebenarnya encoder mapuan decoder memiliki keterbatasan pengolahan bilangan floating point dengan presisi yang sangat tinggi (tanpa pembulatan). Sehingga, hal ini dapat menyebabkan error pada saat encoding maupun decoding. Jadi, untuk mengatasinya algoritma Arithmetic Coding harus diimplementasikan dengan menggunakan bilangan integer 16 atau 32 bit, karena proses perhitungan bilangan integer jauh lebih cepat dan akurat daripada bilangan floating point.
+
+
+2.4 Algoritma Arithmetic Coding Dengan Bilangan Integer
+
+Algoritma Arithmetic Coding dengan bilangan integer sebenarnya memiliki prinsip yang sama dengan menggunakan bilangan floating point. Namun, pada implementasi integer dilakukan modifikasi range 0-1 menjadi 0000h - FFFFh (16 bit hexadesimal). Proses encoding pada tabel 2.8 memperlihatkan bahwa setiap angka MSB (Most Significant Byte) antara low dan high sama, maka nilai tersebut tidak akan pernah berubah untuk iterasi selanjutnya. Sehingga, apabila proses encoding terus dilanjutkan maka tidak akan ada output yang dihasilkan. Jadi, untuk mengatasi masalah tersebut, encoder harus mendeteksi apakah MSB (Most Significant Bit) low dan high sama, jika ternyata sama maka nilai tersebut harus di-shift out ke output, dan menambahkan bit 0 dan 1 pada LSB (Least Significant Bit) low dan high. Hal inilah yang memungkinkan proses encoding bisa menghasilkan kode yang infinite antara 0000h-FFFFh.
+
+Contoh:
+Low	= 0110 1100 0001 0001
+High	= 0111 0101 1010 0011
+
+MSB Low = MSB High = 011. Shift-out bit-bit tersebut, sehingga Output = 011
+
+Kemudian shift-in bit 0 dan 1 pada LSB low dan high.
+Low	= 0110 0000 1000 1000
+High	= 1010 1101 0001 1111
+
+Namun, adakalanya pada saat encoding nilai low dan high saling mendekati (hampir sama). Contoh: low = 49995 dan high = 50003. Apabila proses encoding dilanjutkan maka nilai tersebut akan semakin dekat hingga akhirnya sama, jika hal ini terjadi maka tidak akan ada MSB yang akan di-output-kan sampai proses encoding selesai. Kondisi ini disebut underflow, yaitu MSB ke-dua dari low = 1, dan high = 0. Jadi, untuk mengatasinya encoder harus menyingkirkan bit tersebut, lalu menambahkan bit 0 dan 1 pada LSB low dan high.
+
+Berikut contoh yang mendiskripsikan kondisi underflow dan setelah diatasi:
+
+Low	= 0110 0000 1000 1000
+High	= 1001 1101 0001 1111
+
+               
+Tabel 2.11 Algoritma Dasar Arithmetic Encoding Dengan Bilangan Integer
+Step 1:
+Step 2:
+Step 3:
+Step 4:
+
+
+Step 5:
+Step 5a:
+Step 5b: 
+
+Step 5c:
+
+Step 5d:
+Step 5da:
+Step 5db: Step 5dc: Step 5dd: Step 5de: Step 5df: Step 5dg: Step 5dh: Step 5di: Step 5dj: Step 5dk: Step 5dl: Step 5dm: Step 5dn: Step 5do: Step 5dp: Step 5e: Step 5f: Step 6:	Probalitas ditentukan dan penskalaan dilakukan bila perlu
+Low  ? 0000h 
+High ? FFFFh
+Underflow ? 0 
+
+while karakter masih ada dalam input stream do begin
+   CodeRange ? High – Low + 1
+   High ? Low + (CodeRange * HighRange(CurrentSymbol) / ?Si) - 1
+   Low ?Low + (CodeRange * LowRange(CurrentSymbol)/?Si)
+
+   loop sampai 2nd MSB tidak sama
+      If 2nd MSB Low = 2nd MSB High then begin
+          Hapus 2nd MSB Low dan 2nd High
+          Output ? Output + 2nd MSB Low
+          While Underflow > 0 do begin
+             Output ? Output + OppositeBit(2nd MSB Low)
+          End
+          Shift in bit 0 dan 1 pada Low dan High
+      else 
+          if Low dan High sedang underflow then begin
+              Underflow ? Underflow + 1
+              Hapus bit penyebab underflow
+              Shift-in bit 0 dan 1 pada Low dan High
+          end else begin
+              Lanjut mengkodekan simbol berikutnya
+          end
+      end
+   end 
+end 
+EncodedStream ? Output
+
+Contoh, untuk mengkodekan string “ABCCEDAC” dengan menggunakan 7 bit, maka prosesnya dapat dilihat seperti berikut:
+
+Tabel 2.12 Probalitas string “ABCCEDAC”
+Simbol	Frekuensi	Low	High
+A	2	0	2
+B	1	2	3
+C	3	3	6
+D	1	6	7
+E	1	7	8
+
+Low = 0; High = 7Fh; CurrentSymbol = “A”;  ? i = 8;  { ? i  adalah total frekuensi }
+CodeRange = High – Low + 1 = 7Fh – 0 + 1 = 128d
+High = Low + (CodeRange * HighRange(A) / ? i ) – 1 
+         = 0 + (128 * 2 / 8) – 1 = 31d (0011111b)
+Low	= Low + (CodeRange * LowRange(A) / ? i)
+       	= 0 + (128 * 0 / 8)
+       	= 0d (000000b)
+
+Setelah MSB low dan high diperiksa maka,
+Output = 00b
+Low  = 0000000b (0d)
+High = 1111111b (127d)
+
+Proses tersebut diteruskan sampai karakter yang akan dikodekan tidak ada lagi. Proses keseluruhan diringkas pada tabel 2.13 berikut ini.
+
+Tabel 2.13 Proses encoding string “ABCCEDAC”
+Chr	Low	High	Output	Setelah MSB di shift-out	Und	Setelah Underflow
+				Low	High		Low	High
+A	0000000 [0]	0011111 [31]	00	0000000 [0]	1111111 [127]	0		
+B	0100000 [32]	0101111 [47]	010	0000000 [0]	1111111 [127]	0		
+C	0110000 [48]	1011111 [95]				1	0100000[32]	1111111[127]
+C	1000100 [68]	1100111 [103]	10			0		
+E	1001111 [71]	1001111 [79]	100	0111000 [56]	1111111 [127]	0		
+D	1101110 [110]	1110110 [118]	11	0111000 [56]	1011011 [91]	1	0110000[48]	1110111[119]
+A	0110000 [48]	1000001 [65]				3	0000000[0]	1000111[71]
+C	0011011 [27]	0110101 [53]	0111	0110110 [54]	1101011 [107]	0		
+Sisa			1					
+
+Maka output dari encoding string “ABCCEDAC” adalah 00010101001101111. Sehingga terjadi pengompresian dari 8 x 8 = 64 bit menjadi 17 bit. 
+
+Proses decoding pada Arithmetic Coding memiliki prinsip yang hampir sama dengan proses encoding. Pada saat decoding, codeword dari encoded stream diinisialisasi dengan N bit pertama, maksudnya jika pada saat encoding encoder menggunakan 16 bit, maka pada saat decoding codeword harus diinisialisasi juga dengan 16 bit pertama. 
+
+Satu hal yang perlu diperhatikan pada saat decoding adalah, sesaat setelah simbol yang mencakup nilai codeword ditemukan. Maka range simbol tersebut harus di-update untuk menghilangkan efek dari range simbol sebelumnya, kemudian menentukan nilai high dan low berdasarkan simbol yang aktif, karena hal serupa juga telah dilakukan pada saat encoding. Algoritma dasar Arithmetic Coding decoding dengan bilangan integer ditunjukkan pada tabel 2.14 berikut ini.
+
+Tabel 2.14 Algoritma Dasar Arithmetic Decoding Dengan Bilangan Integer
+Step 1:
+Step 2:
+Step 3:
+Step 4:
+
+Step 5:
+
+Step 5a:
+Step 5b:
+Step 5c: 
+
+
+Step 5d:
+
+Step 5e:
+
+Step 5f:
+Step 5fa: 
+Step 5fb: Step 5fc: Step 5fd: Step 5fe: Step 5ff: Step 5fg: Step 5fh: Step 5fi: Step 5fj: Step 5fk: Step 5fl: Step 5fm: Step 5g: Step 6:
+Step 7:	Codeword ? ambil N bit pertama dari encoded stream
+Ambil probalitas yang telah dibentuk pada saat encoding
+Low  ? 0000h
+High ? FFFFh
+
+while karakter <> EOF do begin
+   { update CodeRange }
+   CodeRange ? High – Low + 1
+   Temp ? (Codeword - Low) + 1 * ?Si / CodeRange
+   EncodedSymbols ? Cari karakter yang berkorespondensi 
+   dengan Temp
+   { update high dan low }
+   High ? Low + (CodeRange * HighRange(CurrentSymbol) / 
+   ?Si) - 1
+   Low ? Low + (CodeRange * LowRange(CurrentSymbol)/?Si)
+
+   loop sampai 2nd MSB Low dan High tidak sama
+     If 2nd MSB Low = 2nd MSB High then begin
+        Shift out MSB tersebut
+        Shift in bit 0 dan 1 pada Low dan High
+        Shift in bit selanjutnya untuk codeword
+     else 
+        if Low dan High sedang underflow then begin
+          Shift in bit selanjutnya untuk codeword
+          Shift out bit penyebab underflow tersebut
+          Shift-in bit 0 dan 1 pada Low dan High
+        end else begin
+          Lanjut mendekoding codeword berikutnya
+        end
+     end
+   end 
+end 
+DecodedStream ? EncodedSymbols
+	
+
+2.5 Algoritma Run-Length Encoding (RLE) 
+
+Algoritma RLE adalah algoritma yang memanfaatkan karakter-karakter yang berulang secara berurutan pada data yaitu dengan mengkodekannya dengan sebuah string yang terdiri dari jumlah perulangan karakter yang terjadi, diikuti dengan sebuah karakter yang berulang tersebut. Sehingga banyak tidaknya deretan karakter yang berulang pada data merupakan penentu keberhasilan kompresi algoritma RLE. Namun, pada prakteknya setiap kode perlu ditambahkan sebuah penanda (marker byte) yang berfungsi untuk menghindari keambiguan pada saat decoding. Jadi, secara umum format kode yang dihasilkan oleh algoritma RLE dapat dituliskan sebagai berikut
+
+
+Tabel 2.15 Format Kode Deret Karakter Berulang
+
+
+
+
+dimana m adalah penanda (marker byte), n adalah jumlah deret karakter yang berulang, dan s sebuah karakter yang berulang tersebut. 
+
+Sebagai contoh apabila string: “AAAAABBACCCDDDDABCCCCCCC” dikompresi dengan algoritma RLE maka hasilnya adalah: “#5A#2B#1A#3C#4D#7C”. Karena panjang kode yang dihasilkan oleh RLE untuk setiap deret karakter minimal 3 byte, maka jumlah perulangan karakter harus lebih dari 3 (tiga) kali agar pengkodean bisa dilakukan. Satu hal yang perlu diperhatikan untuk penanda m adalah, sebaiknya yang dipilih adalah karakter yang jarang digunakan pada data (seperti tanda #, ^, |, atau ~). Namun, apabila penanda m terdapat pada data, cukup mengkodekannya sebanyak dua kali, sehingga apabila penanda tersebut muncul dua kali secara berturut-turut saat decoding, maka penanda tersebut dianggap sebagai karakter asli. 
+
+Algoritma decoding pada RLE cukup sederhana yaitu mengembalikan karakter asli berdasarkan jumlah perulangan setiap karakter pada hasil kompresi. Misalnya, apabila hasil kompresi adalah “#5A#4CAA#5D” maka hasil dekompresi “AAAAACCCCAADDDDD”. 
+
+Pada umumnya algoritma RLE lebih efektif digunakan pada file-file grafis atau faxmail daripada file teks, karena pada umumnya karakter-karakter pada file teks bersifat heterogen dan sangat jarang memliki deretan karakter yang sama di atas 3 (tiga) kali. Namun, agar algoritma RLE efektif pada file teks, maka file tersebut perlu diubah kebentuk yang lebih compressable oleh RLE yaitu memiliki banyak karakter yang sama secara berurutan, Jadi, untuk mengubah file teks tersebut digunakan algoritma Burrows Wheeler Transform (BWT).
+
+
+2.6 Algoritma Burrows-Wheeler Transform (BWT)
+
+Pada tahun 1994 David Wheeler dan Michael Burrows mengeluarkan makalah mereka yang berjudul “A Block-Sorting Lossless Data Compression Algorithm” yang menyajikan sebuah algoritma kompresi data berdasarkan suatu transformasi dimana transformasi ini sebelumnya telah ditemukan oleh David Wheeler pada tahun 1983 namun tidak dipublikasikan. Transformasi ini kemudian disebut sebagai Burrows-Wheeler Transform (BWT).
+
+Sebenarnya algoritma BWT bukan merupakan suatu algoritma kompresi yang berdiri sendiri seperti algoritma kompresi lainnya, melainkan suatu proses yang melakukan transformasi terhadap blok data teks menjadi suatu bentuk baru yang tetap mengandung karakter yang sama, hanya saja urutannya yang berbeda. Transformasi ini cenderung mengelompokan karakter secara berurut sehingga peluang untuk menemukan karakter yang sama secara berurutan akan meningkat sehingga akan lebih mudah dikompresi oleh algoritma kompresi seperti Run-Length Encoding, Move To Front, atau Huffman Coding. Karena algoritma BWT hanya melakuan perubahan urutan karakter dari data sebelumnya, maka algoritma ini bersifat reversible. 
+
+Proses encoding dari algoritma BWT adalah mentransformasikan sebuah string S yang memiliki sebanyak N karakter dengan cara melakukan rotasi (cyclic shift) atau permutasi sebanyak N-1 kali, sehingga terbentuk matriks M yang memiliki ordo NxN yang elemenya adalah karakter-karakter string S, sedangkan kolom dan barisnya adalah string hasil rotasi. Setelah proses rotasi selesai, maka baris matriks M diurutkan secara abjad (lexicographical). Salah satu dari baris matriks M adalah string asli S yang berada pada index I. Hasil encoding adalah string L yang dibentuk dari karakter terakhir dari setiap baris matriks M, dan index I. Decoder pada BWT bisa mengembalikan string asli S dengan hanya mengetahui pasangan L dan I tanpa membentuk kembali matriks M. 
+
+Sebagai contoh untuk melakukan transformasi pada string “BANANA” dapat dilihat pada langkah-langkah berikut:
+
+1.	Membentuk Matriks M yang berordo NxN
+Melakukan rotasi (cyclic shift) pada string “BANANA” sebanyak N-1 kali, sehingga diperoleh matrik M yang berordo NxN.
+
+ 
+Gambar 2.2 Matriks M Dari String “BANANA”
+
+2.	Mengurutkan Hasil Rotasi
+Setelah matriks M terbentuk maka dilakukan pengurutan secara lexicographic pada baris-baris matriks. 
+
+
+
+
+                         
+
+
+
+
+Gambar 2.3 Matriks M Dari String “BANANA” Setelah Diurutkan Secara Lexicographic
+Pada gambar matriks 2.3 akan diperoleh string L yang dibentuk dari karakter terakhir setiap baris matriks M, dan index I yang menyatakan posisi string S asli, sehingga hasil encoding adalah (L, I) yang dalam hal ini adalah (NNBAAA, 3).
+
+Proses decoding pada algoritma BWT sedikit berbeda dengan encoding. Jika pada encoding sebuah matriks M harus dibuat secara utuh, maka pada decoding, matriks yang dibuat hanya terdiri dari kolom pertama F dan kolom terakhir L. Dimana F diperoleh dengan cara mengurutkan L secara lexicographic. Hal ini berlaku karena kolom pertama matriks M pada saat encoding adalah terurut secara lexicographic dan setiap elemen L juga sama dengan elemen string S, hanya saja urutannya yang berbeda. Dengan kata lain, matriks yang dibentuk pada saat encoding dan decoding akan memiliki kolom pertama yang sama. 
+
+Untuk memperoleh string S berdasarkan L dan I, maka dibentuk suatu vektor transformasi T yang merupakan suatu array yang setiap elemennya menunjukkan korelasi atau pemetaan dari elemen F ke L. Hal ini diilustrasikan pada gambar 7 dengan F, T, dan L dari encoded string (NNBAAA, 3).
+
+ 
+
+Gambar 2.4 Vektor Transformasi T Dari Encoded String (NNBAAA, 3)
+
+Karena index I dari string S telah diketahui pada saat encoding (index yang diberi tanda asterik), maka akan diketahui pula karakter pertama dan terakhir dari string S pada F dan L, yaitu karakter “B” dan “A”. Sehingga dengan adanya informasi ini, maka string asli akan dapat diperoleh.
+
+2.7 Optimasi Algoritma RLE dengan Algoritma BWT
+
+Mengingat sifat algoritma BWT yang cenderung menghasilkan string yang memiliki banyak deretan karakter yang sama, maka akan sangat cocok bila dikompresi dengan algoritma RLE. 
+
+Sebagai contoh, apabila string “pelan-pelan_jalan_asalkan_selamat” dikompresi dengan algoritma RLE tanpa terlebih dahulu ditransformasi dengan algoritma BWT, maka yang dihasilkan adalah string itu sendiri, karena tidak ada deretan karakter yang sama di atas 3 (tiga) kali. Namun, hasilnya akan berbeda bila string tersebut terlebih dahulu ditransformasi menggunakan algoritma BWT, sehingga hasil transformasinya akan seperti gambar 10 berikut:
+
+nnnnjsllllk_mspp_leeaeaaaaaa-a_at
+
+
+Gambar 2.5 Contoh Hasil Transformasi Algoritma BWT
+
+Apabila string pada gambar 10 dikompresi dengan algoritma RLE maka hasilnya adalah “*4njs*4lk_mspp_leeae*6a-a_at”. Sehingga terjadi pemampatan yaitu dari 33 byte menjadi 28 byte. Dari contoh ini terlihat bahwa algoritma RLE cukup efektif bila digabungkan dengan algoritma BWT. Untuk proses pengembalian ke string asli maka encoded string terlebih dahulu di-decoding dengan algoritma RLE kemudian algoritma BWT. 
+
+
+2.8	File Teks
+
+File teks adalah file yang terdiri dari karakter-karakter terformat maupun tidak. Contoh terkernal adalah karakter ASCII. ASCII (American Standard Code For Information Interchange) merupakan suatu standar pengkodean karakter pada mesin komputer, dimana setiap karakter direpresentasikan dengan 8 bit, sehingga jumlah karakter ASCII yang dapat dibentuk adalah 28 = 256 karakter yang terdiri dari kombinasi 00000000 sampai 11111111, (dalam bentuk desimal 0 - 255). 
+
+Teks terformat (formatted style) adalah jenis teks yang sudah diberi style sehingga untuk merepresentasikan satu karakter saja membutuhkan space beberapa byte (1 byte = 8 bit). Contoh terkenal dari jenis file ini adalah format dokumen Microsoft Word (*.doc, *docx) dan Rich Text Format (*.rtf). 
+
+Teks tidak terformat (unformatted style) sering juga disebut teks sederhana (plain teks) merupakan jenis teks yang setiap karakternya berukuran 8 bit karena tidak ada fitur tambahan untuk memformat teks tersebut. Sehingga, plain text ukurannya lebih kecil dan lebih mudah diolah daripada teks yang terformat. Contoh perangkat lunak untuk pengolahan plain text adalah Notepad yang menghasilkan ekstensi (*.txt), dan beberapa perangkat lunak untuk pengetikan source code (kode program). 
+
+
+2.9	Kompleksitas Algoritma
+
+Secara informal algoritma adalah suatu prosedur komputasi yang terdefenisi dengan baik yang mengambil beberapa nilai atau sekumpulan nilai sebagai input dan menghasilkan beberapa nilai atau sekumpulan nilai sebagai output. Dengan demikian algoritma adalah suatu urutan langkah-langkah komputasi yang mentransformasikan input menjadi output (Thomas H. Cormen, 2001). Secara singkat, algoritma merupakan langkah-langkah logis untuk pemecahan suatu masalah. 
+
+Namun, dalam Ilmu Komputer suatu algoritma tidak hanya dilihat apakah algoritma tersebut benar atau dapat memecahkan masalah tetapi algoritma juga harus efektif. Keefektifan suatu algoritma biasanya diukur dari seberapa besar jumlah waktu dan ruang (space) memori yang dibutuhkan untuk menjalankannya. Algoritma yang efesien adalah algoritma yang meminimumkan kebutuhan waktu dan ruang dimana semakin minim waktu dan ruang yang dibutuhkan, maka semakin efektif pula algoritma tersebut. Untuk menerangkan model abstrak pengukuran waktu dan ruang maka digunakan suatu fungsi yang menjelaskan bagaimana ukuran masukan data (n) mempengaruhi perfomansi algoritma yang disebut sebagai kompleksitas algoritma 
+Secara umum, kompleksitas algoritma terdiri dari dua macam yaitu kompleksitas waktu (time complexity) dan kompleksitas ruang (space complexity). Sehingga, dengan diketahuinya fungsi kompleksitas suatu algoritma, maka dapat ditentukan laju pertumbuhan waktu (ruang) yang diperlukan seiring dengan meningkatnya ukuran masukan (n) data. Dengan demikian, informasi pertumbungan fungsi kompleksitas (growth rates) dapat digunakan untuk membandingkan dua atau lebih algoritma dengan mengambil pangkat tertinggi (highest order) fungsi kompleksitas yang diekspresikan dengan notasi Big-O. Hal ini disebabkan karena nilai konstant pada fungsi kompleksitas tidak akan terlalu dominan bila dibandingkan dengan order tertinggi yang mungkin meledak untuk input yang semakin besar.
+
+
+2.10 Notasi Big-O
+
+Notasi Big-O adalah notasi matematika yang digunakan untuk menggambarkan suatu fungsi asimptotik. Notasi Big-O sering juga digunakan untuk menjelaskan berapa besar ukuran dari suatu data mempengaruhi penggunaan sebuah algoritma dari sumber komputasi. Notasi ini pertama kali diperkenalkan pada tahun 1894 oleh Paul Bachman, yaitu pada volume kedua dari bukunya Analytische Zahlentheorie (analisis teori bilangan) sehingga notasi Big-O biasa juga disebut sebagai notasi Landau (Landau notation), Bachman-Landau notation, atau notasi asimptotik (Asimptotik notation).
+
+Dalam bidang Matematika, notasi Big-O mendekripsikan sifat batasan (limiting behaviour) dari suatu fungsi ketika argument cenderung mengarah ke suatu nilai tertentu atau nilai tak hingga, biasanya berkaitan dengan fungsi yang lebih sederhana. Big-O menkarakteristikkan fungsi-fungsi menurut pertumbuhan fungsi kompleksitasnya. Fungsi yang berbeda dengan pertumbungan fungsi kompleksitas yang sama bisa direpresentasikan dengan notasi Big-O yang sama. (Wikepedia, 2010). Sedangkan, dalam Ilmu Komputer notasi Big-O sangat berguna dalam analisis kompleksitas suatu algoritma.
+Untuk menjelaskan konsep Big-O, diasumsikan terdapat dua fungsi f dan g, dengan kecepatan tingkat pertumbungan yang berbeda. Misalnya, f(n) = 100n2, dan g(n) = n4.
+
+
+             Tabel 2.16 Perbandingan 
+           Pertumbuhan fungsi f dan g
+
+n	f(n)	g(n)
+10	10.000	10.000
+50	250.000	6.250.000
+100	1.000.000	100.000.000
+150	2.250.000	506.250.000
+
+						             
+                                                                               Gambar  2.6 Grafik Fungsi f dan g
+                                                                                (Sumber: www.cs.odu.edu)
+
+Dari tabel 2.16 terlihat bahwa fungsi g(n) memiliki tingkat pertumbuhan yang lebih cepat dari pada f(n) saat n > 10, dan dapat dikatakan bahwa f adalah Big-O dari g.
+Defenisi (Big-O): Misalkan f dan g adalah dua fungsi dari bilangan bulat ke bilangan riil. Dapat dikatakan bahwa f(x) = O(g(x)), jika dan hanya jika terdapat dua konstanta C dan n0  sehingga demikian |f(x)| < C |g(x)| atau f(x) < C g(x), saat x > n0. 
+Secara geometri f(n) = O(g(n)) dapat digambarkan sebagai berikut.
+
+
+
+
+
+
+
+
+Gambar  2.7 Grafik Fungsi f dan g
+Contoh: diberikan fungsi f(x) = 3x2 + 2x + 4. Maka dapat dikatakan bahwa f(x) = 3x2 + 2x + 4 = O(x2), karena:
+Untuk x > 1 : 3x2 + 2x + 4 < 3x2 + 2x2 + 4x2
+                      3x2 + 2x + 4 < 9x2
+Karena itu, diperoleh C = 9, dan n0 = 1, sehingga memenuhi f(x)  < C g(x) saat x > no dengan demikian f(x) = O(g(x)) = O(x2).
+
+Dengan cara yang sama, dapat juga dikatakan bahwa 5x + 10 adalah O(x2), karena: 
+Untuk x > 1 : 5x + 10 < 5x2 + 10x2
+                      5x + 10 < 15x2
+Karena itu, C = 15, dan n0 = 1, sehingga masih memenuhi f(x) < C g(x) saat x > n0.
+
+ Sebenarnya masih ada lagi notasi-notasi yang berhubungan dengan Big-O, seperti Big-Omega, Big-Theta, Little-Oh, Little-Omega. Namun, dalam analisis algoritma notasi Big-O yang paling sering digunakan karena notasi ini mendeskripsikan perfomansi kasus terburuk (worst-case) dari suatu algoritma. Sehingga, Big-O dapat menjamin bahwa suatu algoritma tidak akan lebih buruk dari worst-case. Oleh karena itu, Big-O dapat ditulis sebagai pangkat tertinggi (highest order) dari suatu fungsi polinomial dengan mengabaikan konstanta yang mungkin tidak akan terlalu berpengaruh untuk input (n) yang semakin membesar. Jadi, f(n) = 28n + 12 dapat ditulis dengan O(n), sedangkan untuk f(n) = 5n3 + 3n2 + 3 + 10 ditulis O(n3).
+
+Tujuan penentuan kompleksitas suatu algoritma, sebenarnya bukanlah untuk mengetahui jumlah pasti operasi (langkah/intruksi) yang dikerjakan, melainkan bagaimana jumlah operasi dipengaruhi oleh berbagai ukuran masukan. Kompleksitas algoritma dihitung berdasarkan jumlah langkah/instruksi yang dikerjakan. Penentuaan kompleksitas algoritma biasanya tergantung pada perintah (statement) yang digunakan. Berikut ketetapan waktu untuk beberapa statement.
+
+1.	Operasi pengugasan (assignment), operasi aritmatika, perbandingan, read, write, dan pengaksesan elemen array membutuhkan waktu konstant O(1). 
+
+Contoh: algoritma penukaran dua bilangan integer.
+
+Tabel 2.17 Contoh Algoritma Penukaran Dua Bilangan Integer
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8	procedure tukar(var integer x, y);
+var
+  integer temp;
+begin
+  temp ? x;
+  x ? y;
+  y ? temp;
+end;	
+
+
+
+1
+1
+1
+
+	Total Waktu Eksekusi	1+1+1=3
+
+Pseudo code tabel 2.17 terdapat operasi penugasan (assignment) sebanyak tiga buah dan tiap operasi dilakukan satu kali. Maka kompleksitas algoritma tersebut adalah 1+1+1 = 3, atau Big-O = O(1).
+
+2.	If-then-else satatement adalah perintah yang memilih satu dari dua kondisi yang mungkin, karena prinsip Big-O menentukan worst-case dari suatu algoritma, maka waktu yang diambil dari pernyataan if-then-else adalah waktu terlambat (jumlah operasi terbanyak).
+
+Contoh: algoritma pengecekan umur.
+
+Tabel 2.18 Contoh Algoritma Pengecekan Umur
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7	umur ? read(x);
+if umur < 17 then begin
+   status ? “belum cukup umur!”;
+end else begin
+   status ? “silahkan masuk!”;
+   visitor ? visitor + 1;
+end;	1
+1
+1
+
+1
+1+1=2
+
+	Total Waktu Eksekusi	1+1+max(1,3)=5
+
+
+Maka, kompleksitas algoritma pada tabel 2.18 adalah 1+1+max(1,3) = 5, maka Big-O adalah O(1).
+
+3.	Looping (for, while, repeat) adalah perintah untuk melakukan perulangan dengan panjang tertentu. Jadi, waktu untuk statement ini adalah banyaknya perulangan dikalikan dengan jumlah operasi di dalam perulangan tersebut.
+
+Contoh: algoritma untuk penjumlahan sederetan angka.
+
+Tabel 2.19 Algoritma Untuk Penjumlahan Sederetan Angka
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5	jumlah ? 0;
+for i ? 1 to n do begin
+   jumlah ? jumlah + i;
+end;
+writeln(jumlah);	1
+(1+1)*n = 2n
+(1+1)*n = 2n
+
+1
+	Total Waktu Eksekusi	1+2n+2n+1=2+4n
+
+
+Maka, kompleksitas algoritma pada tabel 2.19 di atas adalah 4n+2 sehingga Big-O adalah O(n).
+
+4.	Perulangan bersarang (nested loop). Penghitungan waktu nested loop memiliki prinsip sama dengan looping biasa, hanya saja pada statement ini terdapat lagi statement perulangan, sehingga kasus ini sering memiliki kompleksitas O(n2) atau O(n3) tergantung jumlah statement perulangan di dalamnya.
+
+Contoh: algoritma Bubble-Sort.
+
+Tabel 2.20 Contoh Algoritma Bubble-Sort
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8	for i ? 1 to n-1 do begin
+   for j ? n downto i+1 do begin
+     if A[j] < A[j-1] do begin
+        temp ? A[j];
+        A[j] ? A[j-1];
+        A[j-1] ? temp;
+     end;
+end;	(1+1+1)*n=3n
+(1+1+1)*n*n=3n2 (1+1+1+1)*n*n=4n2
+(1+1)*n*n=2n2
+(1+1+1+1)*n*n=4n2
+(1+1+1)*n*n=3n2
+	Total Waktu Eksekusi	16n2+3n
+
+Maka, kompleksitas algoritma Bubble-Sort adalah 16n2+3n dengan notasi Big-O = O(n2).
+Pada saat analisis algoritma, terdapat beberapa notasi Big-O yang sering diperoleh yaitu:
+
+1.	O(1)  atau constant time
+Kompleksitas O(1) berarti waktu pelaksanaan algoritma adalah tetap, tidak bergantung pada ukuran masukan.  Contoh: Operasi penugasan (assignment), operasi aritmatika, dan lain-lain.
+	
+2.	O(2log n) atau logarithmic time
+Kompleksitas waktu O(log n) berarti laju pertumbuhan waktunya berjalan lebih lambat daripada pertumbuhan n. Algoritma yang termasuk kelompok ini adalah algoritma yang memecahkan persoalan besar dengan mentransformasikannya menjadi beberapa persoalan yang lebih kecil yang berukuran sama. Contoh algoritma binary search, algoritma pengonversion bilangan integer ke biner. 
+
+3.	O(n) atau linear time
+Algoritma dengan yang waktu pelaksanaannya linear umumnya terdapat pada kasus yang setiap elemen masukannya dikenai proses yang sama, misalnya algoritma sequential search. Bila n dijadikan dua kali semula, maka waktu pelaksanaan algoritma juga dua kali semula.
+
+4.	O(n 2log n) atau linearithmic time
+Waktu pelaksanaan O(n 2log n) terdapat pada algoritma yang memecahkan masalah menjadi beberapa masalah yang lebih kecil,  menyelesaikan setiap masalah secara independen, dan menggabung solusi masing-masing masalah. Metode ini sering disebut dengan teknik devide and conquer. Contoh algoritma Merge Sort, dan Quick Sort.
+
+5.	O(n2) atau quadratic time
+Umumnya algoritma yang termasuk kelompok ini memproses setiap masukan dalam dua buah kalang bersarang, misalnya pada algoritma Bubble Sort. Bila n = 1000, maka waktu pelaksanaan algoritma adalah 1.000.000. Bila n dinaikkan menjadi dua kali semula, maka waktu pelaksanaan algoritma meningkat menjadi empat kali semula. 
+
+6.	O(n3¬) atau cubic time
+Seperti halnya algoritma kuadratik, algoritma kubik memproses setiap masukan dalam tiga buah kalang bersarang, misalnya algoritma perkalian matriks. Bila n = 100, maka waktu pelaksanaan algoritma adalah 1.000.000. Bila n dinaikkan menjadi dua kali semula, waktu pelaksanan algoritma meningkat menjadi delapan kali semula.
+
+7.	O(2n) atau exponential time
+Algoritma yang tergolong kelompok ini mencari solusi persoalan secara "brute force", Bila n = 20, waktu pelaksanaan algoritma adalah 1.000.000. Bila n dijadikan dua kali semula, waktu pelaksanaan menjadi kuadrat kali semula.
+
+8.	O(n!) atau factorial time
+Seperti halnya pada algoritma eksponensial, algoritma jenis ini memproses setiap masukan dan menghubungkannya dengan n - 1 masukan lainnya, misalnya pada kasus TSP (Travelling Salesman Problem). Bila n = 5, maka waktu pelaksanaan algoritma adalah 120. Bila n dijadikan dua kali semula, maka waktu pelaksanaan algoritma menjadi faktorial dari 2n.
+
+Berikut table perbandingan kompleksitas yang menunjukkan seberapa banyak jumlah operasi yang akan dikerjakan untuk berbagai ukuran masukan n.
+
+                          Tabel 2.21 Perbandingan Pertumbuhan Kompleksitas 
+			  (Sumber: www.fredswartz.com)
+
+n	O(1)	O(log n)	O(n)	O(n log n)	O(n2)	O(n3)	2n	n!
+1	1	1	1	1	1	1	2	1
+2	1	1	2	2	4	8	4	2
+4	1	2	4	8	16	64	16	24
+8	1	3	8	24	64	512	256	40320
+16	1	4	16	64	256	4.096	65536	1014
+1.024	1	10	1.024	10.240	106	108	10307	5 x 1026385
+1.048.576	1	20	106	2 x 107	1012	1016	too big	too big
+Pertumbuhan kompleksitas dari masing-masing Big-O pada tabel 2.21 menunjukkan bahwa untuk input n yang semakin besar, waktu O(1)  sama sekali tidak terpengaruh, sedangkan laju pertumbuhan waktu O(log n), O(n), O(n log n) tidak terlalu cepat. Sementara waktu O(n2), O(n3), O(2n), dan O(n!) pengingkatan waktunya sangat cepat sehingga algoritma yang memiliki jenis kompleksitas ini dapat dipastikan waktu eksekusinya sangat lama. Jadi, urutan kompleksitas algoritma dapat ditulis menjadi O(1) < O(log n) < O(n) < O(n log n ) < O(n2) < O(n3) < O(2n) < O(n!).
+
+
+ 
+
+Gambar 2.8 Grafik Perbandingan Pertumbuhan Kompleksitas
+(Sumber: www.cs.odu.edu)
+
+
+
+2.11 Parameter Analisis Perbandingan Algoritma
+
+Agar perbandingan masing-masing algoritma dapat diperoleh seperti yang telah dipaparkan pada rumusan masalah (no 2 dan 3) pada bab 1, maka akan dijelaskan parameter-parameter yang akan digunakan, yang meliputi kompleksitas algoritma, waktu proses kompresi dan dekompresi, dan rasio kompresi.
+1.	Kompleksitas Algoritma
+Dasar teori dan cara pengukuran kompleksitas algoritma telah dijelaskan sebelumnya. Jadi, kompleksitas algoritma yang akan dibandingkan disini adalah kompleksitas masing-masing algoritma untuk proses encoding maupun decoding yang akan diperoleh pada saat perancangan, dimana algoritma yang memiliki kompleksitas yang tinggi berarti memiliki waktu eksekusi yang lama, dan sebaliknya.
+
+2.	Waktu Proses Kompresi dan Proses Dekompresi
+Waktu yang dimaksudkan di sini adalah waktu yang dibutuhkan suatu algoritma untuk melakukan proses kompresi maupun dekompresi terhadap suatu file pada saat pengimplementasian, dimana semakin cepat suatu algoritma melakukan proses kompresi atau dekompresi, maka ada kemungkinan algoritma tersebut baik (efisien), dan sebaliknya.
+
+3.	Rasio Kompresi
+Rasio kompresi adalah perbandingan file hasil kompresi dengan file aslinya, dimana semakin kecil rasio kompresi maka semakin baik algoritma yang digunakan, dan sebaliknya. Penghitungan rasio kompresi dirumuskan pada tabel 2.22 berikut.
+
+
+
+
+Tabel 2.22 Rumus Pengukuran Rasio Kompresi
+
+Contoh: jika suatu file  memiliki ukuran asli 150.000 byte dan setelah dikompresi menjadi 85.000 byte, berarti rasio kompresinya adalah 85.000/150.000 x 100% = 56,66% yang berarti telah terjadi pengurangan file sebesar 56, 66% (65.000 byte).
+
+	Jadi, ketiga parameter di atas akan dipertimbangkan untuk berbagai ukuran file, sehingga dapat disimpulkan keefektifan dan perbandingan setiap algoritma.
+ 
+
+BAB 3
+
+PERANCANGAN DAN IMPLEMENTASI SISTEM
+
+
+
+Pada bab ini akan dibahas tentang perancangan dan implementasi sistem yang mencakup perancangan fungsi-fungsi yang dibutuhkan oleh algoritma, perancangan masing-masing algoritma dalam bentuk flowchart dan pseudo code sekaligus dengan penghitungan kompleksitasnya, perancangan aplikasi dengan DFD (Data Flow Diagram) , interface sistem, dan pengimplementasian sistem.
+
+
+3.1	Perancangan Fungsi Umum
+
+Perancangan fungsi umum merupakan tahapan perancangan fungsi-fungsi yang akan digunakan oleh setiap algoritma selama proses kompresi maupun dekompresi. Karena penentukan kompleksitas suatu algoritma dihitung berdasarkan langkah demi langkah intruksi/operasi yang digunakan, maka perancangan fungsi-fungsi ini akan dirancang dalam bentuk pseudo code lalu kompleksitasnya dihitung. Namun, dibuat suatu batasan dimana beberapa fungsi tidak akan dirancang lagi karena memang sudah tersedia dalam bahasa pemrograman (kususnya Delphi) seperti:
+
+-	Chr(), fungsi untuk pengonversion integer ke karakter ASCII.
+-	Ord(), fungsi untuk pengonversion karakter ASCII ke integer.
+-	StrToInt(), fungsi untuk pengonversion string ke integer.
+-	IntToStr(), fungsi pengonversion integer ke string.
+-	Length(), fungsi untuk memperoleh panjang string.
+
+Karena fungsi-fungsi di atas merupakan bawaan dari bahasa pemrograman Delphi, maka akan sangat sulit menentukan kompleksitasnya karena tidak diketahui secara pasti intruksi apa saja yang digunakan fungsi tersebut untuk melakukan tugasnya, sehingga khusus untuk kasus ini fungsi tersebut dianggap memiliki kompleksitas O(1) atau waktu eksekusinya constant.
+
+
+3.1.1	Fungsi Pengonversion Bilangan Desimal ke Bilangan Biner
+
+Fungsi pengonversian ini digunakan untuk mengonversi bilangan desimal ke bilangan biner. Fungsi ini memiliki satu parameter sebagai masukan dengan tipe integer dan mengembalikan hasil konversi dengan tipe string. Contoh, jika yang dilewatkan 28 maka hasil konversinya adalah 11100. Pseudo code untuk fungsi ini ditunjukkan pada tabel 3.1 berikut ini.
+
+Tabel 3.1 Pseudo Code Fungsi Pengonversion Bilangan Desimal ke Bilangan Biner
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11	function DecimalToBiner(integer Dec)
+var
+   string Biner; integer Modules;
+begin
+   while( Dec > 0 ) do begin
+Modules ? Dec mod 2;
+Dec ? Dec div 2;
+Biner ? IntToStr(modules) + Biner;
+   end;
+   DecimalToBiner ? Biner;
+end;	
+
+
+
+1*2log n
+(1+1)*2log n
+(1+1)*2log n
+(1+1+1)*2log n
+
+1
+	Total Waktu Eksekusi	8 * 2log n + 1
+
+Tipe perulangan dari pseudo code pada tabel 3.1 termasuk dalam kategori logarithmic time (log n), karena ide dasar pengonversian bilangan desimal ke biner adalah membagi bilangan dengan 2 sampai bilangan tersebut habis dibagi 2. Sehingga pertumbuhan kompleksitasnya lebih lambat dari n. Misal, n = 32, maka dapat dipastikan steps yang dikerjakan adalah 2log 32 = 5. Jadi, kompleksitas dari fungsi ini adalah  8 * 2log n + 1 atau dapat ditulis 8 * log n + 1 (basis 2) dengan O(log n). Namun, pada kasus ini masukan dibatasi hanya 16 bit bilangan integer (216 = 65536) saja, sehingga worst-case dari fungsi ini adalah 8 * 2log 65536 + 1  = 129 sehingga waktu eksekusinya dapat dianggap O(1). Pseudo code pada baris ke-8 fungsi IntToStr() adalah fungsi bawaan bahasa pemrograman Delphi, jadi waktu eksekusinya dianggap O(1) seperti yang telah dijelaskan sebelumnya.
+
+3.1.2	Fungsi Pengonversion Bilangan Biner ke Bilangan Desimal
+
+Fungsi pengonversion ini adalah kebalikan dari fungsi pengonversion desimal ke biner, yaitu fungsi yang mengonversi sederatan biner menjadi bilangan desimal. Penggunaan fungsi ini adalah melewatkan deretan biner sebagai masukan dan akan menghasilkan output dengan tipe integer. Contoh, jika masukan biner adalah 10110 maka hasilnya adalah 22.
+
+Tabel 3.2 Pseudo Code Fungsi Pengonversion Bilangan Biner ke Bilangan Desimal
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15	function BinerToDecimal(string Biner)
+const
+  array Power?(1,2,4,8,16,32,64,128,256,
+  512,1024,2048,4096,8192,16384,32768,65536);
+var
+  Integer I, Dec, Index;
+begin
+  Dec ? 0;
+  Index ? 0;
+  for I ? Length(Biner) downto 1 do begin
+     Dec?Dec+(Power[Index]*StrToInt(Biner[i]));
+     Index ? Index + 1;
+  end;
+  BinerToDecimal ? Dec;
+end;	
+
+
+17
+
+
+
+1
+1
+(1+1+1)*n
+(1+1+1+1+1+1)*n
+(1+1)*n
+
+1
+
+	Total Waktu Eksekusi	11*n + 20
+
+Kompleksitas fungsi konversi ini adalah 11n+20, sehingga O(n) dimana n adalah panjang biner yang sedang dilewatkan pada fungsi tersebut. Namun, karena output dari fungsi ini juga dibatasi maksimum 16 bit bilangan integer, maka panjang maksimum biner yang akan dikonversi adalah 16 bit juga, sehingga perulangan maksimum yang akan terjadi hanya 16 kali saja, jadi worst-case nya adalah 11(16) + 20 = 196. Maka, waktu eksekusinya dapat dianggap constant atau O(1).
+
+
+3.1.3	Fungsi Padding
+
+Fungsi Padding adalah fungsi yang melakukan penambahan bit ‘0’ tepat di sebelah kanan atau kiri dari string masukan yang akan di-padding. Hal ini berguna untuk menjamin suatu deretan biner memiliki panjang yang seragam, sehingga tidak terjadi kesalahan pada saat pengonversian deretan biner ke karakter ASCII atau sebaliknya yang disebakan kekurangan atau kelebihan bit. Fungsi ini memiliki tiga parameter yaitu, Str (tipe string) yaitu sebagai variabel dari masukan, LengthPad (tipe bilangan bulat) yaitu batas panjang string setelah di-padding, dan PadType (tipe string) yang berfungsi untuk memberitahu disebelah mana bit padding akan ditambahkan. Contoh, BitPadding(‘01101’, 8, ‘LEFT’), maka akan ditambahkan tiga bit ‘0’ disebelah kiri sehingga panjang biner yang dihasilkan tepat 8 bit. Dalam hal ini hasilnya adalah 00001101. Algoritma padding ditunjukkan pada tabel 3.3 berikut.
+
+Tabel 3.3 Pseudo Code Fungsi Padding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14	function BitPadding(string Str; byte LengthPad; string PadType)
+var
+  byte I;
+begin
+  for I ? Length(Str) to LengthPad - 1 do begin
+    if PadType = 'LEFT' then begin
+      Str ? '0' + Str;
+    end else begin
+      Str ? Str + '0';
+    end;
+  end;
+  BitPadding ? Str;
+end;	
+
+
+
+
+4*(n-1)=4n-4
+1*(n-1)=n-1
+2*(n-1)=2n-2
+
+2*(n-1)=2n-2
+
+
+1
+	Total Waktu Eksekusi	7*(n-1) + 1
+
+Algoritma padding di atas memiliki kompleksitas 7*(n-1)+1 = 7n-6, dengan notasi Big- O = O(n). Namun, pada prakteknya panjang LengtPad  yang akan dilewatkan dibatasi maksimum hanya 16 bit, maka maksimum perulangan untuk melakukan padding hanya 16-1 = 15 kali dengan asumsi panjang string 1 (satu). Jadi, worst-case dari algoritma ini adalah 7(15)-6 = 99, untuk itu waktu eksekusi algoritma ini dapat juga dianggap constant atau O(1).
+
+
+3.1.4	Fungsi Pemotongan String
+
+Sesuai dengan namanya, fungsi ini digunakan untuk memotong string dengan posisi dan panjang tertentu. Fungsi ini memiliki tiga parameter yang harus dilewatkan ketika hendak memotong string Str dimulai dari posisi Start dengan panjang Long. Hasil akhir dari fungsi substr ini adalah string yang telah terpotong. Contoh, SubStr(‘almost_easy’, 3, 7) maka hasilnya adalah most_ea. Pseudo code selengkapnya diberikan pada tabel 3.4 berikut.
+
+Tabel 3.4 Pseudo Code Fungsi Pemotongan String
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12	function SubStr(string Str; integer Start; integer Long)
+var
+  string Output;
+  integer I;
+begin
+  Output ? '';
+  for I?Start to ((Start + Long) - 1) do begin
+    Output ? Output + Str[I];
+  end;
+  SubStr ? Output;
+end;	
+
+
+
+
+
+1
+4*(n-1)=4n-4
+3*(n-1)=3n=3
+
+1
+	Total Waktu Eksekusi	7*(n-1) + 2
+
+Kompleksitas fungsi SubStr() ini adalah 7*(n-1)+2 = 7n-5 dengan O(n). Namun, karena panjang masimum perulangan terbatas pada nilai tertentu yang tidak terlalu besar, maka kompleksitasnya dapat dianggap constant atau O(1).
+
+
+3.1.5	Fungsi Pemecah String
+
+Fungsi pemecah string adalah fungsi yang berguna untuk memecah string S berdasarkan indicator atau delimeter yang terkandung dalam string yang akan dipecah. Nilai kembalian fungsi ini adalah string yang sudah terpecah yang disimpan dalam variabel array. Contoh, Exp = Explode(‘|’, ‘hello|world|people’), dalam hal ini karakter ‘|’ berguna untuk menandakan batas pemecahan, sehingga hasil contoh tersebut adalah Exp[0] = ‘hello’, Exp[1] = ‘world’, dan Exp[2] = ‘people’. 
+	
+Satu hal yang perlu diketahui adalah bahwa delimeter D dapat dipilih karakter apa saja sesuai dengan kebutuhan, namun panjangnya harus satu karakter saja. Contoh, Exp = Explode(‘*’, ‘ab*cd’), maka hasilnya adalah Exp[0] = ‘ab’ dan Exp[1] = ‘cd’. 
+
+
+
+Tabel 3.5 Pseudo Code Fungsi Pemecah String
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18	function Explode(string D; string S)
+var
+  integer C;
+begin
+  Result ? TStringList.Create;
+  C ? 0;
+  while S <> '' do begin
+    if Pos(D, S) > 0 then begin
+      Result.Add(Copy(S, 1, Pos(D, S) – 1));
+      Delete(S, 1,Length(Result[C]) + 
+      ¬Length(D));
+    end else begin
+      Result.Add(S); 
+      S ? '';
+    end;
+    C ? C+1;
+  end;
+end;	
+
+
+
+1+1=2
+1
+1*n=n
+(1+1)*n=2n
+(1+1+1+1)*n=4n
+
+(1+1+1+1+1)*n=5n
+
+1*n=n
+1*n=n
+
+1+1=2
+	Total Waktu Eksekusi	Max(9n,2n)+3n+5
+
+Kompleksitas dari algoritma tersebut adalah 12n+5 dengan Big-O = O(n). Namun, sama halnya seperti fungsi pemotongan string jumlah maksimum perulangan akan terbatas pada nilai tertentu yang tidak terlalu besar. Sehingga kompleksitasnya dapat juga dianggap O(1).
+
+3.1.6	Fungsi Pembulatan ke Atas Bilangan Real
+
+Fungsi ini bertujuan untuk membulatkan ke atas bilangan pecahan, sehingga hasilnya adalah bilangan integer. Contoh, Ceil(28,8) = 29, Ceil(12,4) = 13.
+
+Tabel 3.6 Pseudo Code Pembulatan ke Atas Bilangan Real
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14	function Ceil(real X)
+var 
+  integer Format;
+begin
+  if X < 1 then begin
+    Ceil ? 1;
+  end else begin
+    Format ? StrToInt(FormatFloat('#', X));
+    if (Format > X) or (Format = X) then 
+    begin 
+      Ceil ? Format;
+    end else begin 
+      Ceil ? Format + 1;
+  end; end; end;	
+
+
+
+1
+1
+
+1+1+1=3
+1+1+1=3
+
+1
+
+1+1=2
+	Total Waktu Eksekusi	9
+Total waktu eksekusi algoritma di atas adalah tidak tergantung pada panjang digit bilangan real yang akan dibulatkan sehingga kompleksitasnya adalah 9  atau O(1).
+
+
+3.1.7	Fungsi Pembulatan ke Bawah Bilangan Real
+
+Fungsi ini adalah kebalikan dari fungsi pembulatan ke atas bilangan real. Jika pada fungsi sebelumnya adalah membulatkan bilangan real ke atas, maka fungsi ini membulatkan bilangan real ke bawah. Contoh, Floor(28,8) = 28, Floor(12,4) = 12.
+
+Tabel 3.7 Pseudo Code Pembulatan ke Bawah Bilangan Real
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15	function Floor(real X)
+var
+  integer Format;
+begin
+  if X < 1 then begin
+    Floor ? 0;
+  end else begin
+    Format ? StrToInt(FormatFloat('#', X));
+    if (Format > X) then begin
+      Floor ? Format - 1;
+    end else begin
+      Floor ? Format;
+    end;
+  end;
+end;	
+
+
+
+1
+1
+
+1+1+1=3
+1
+1+1=2
+
+1
+	Total Waktu Eksekusi	7
+
+Kompleksitas dari algoritma ini adalah 7, sehingga waktu eksekusinya juga sama seperti fungsi pembulatan ke atas bilangan real yaitu constant atau O(1).
+
+
+3.2	Perancangan Algoritma Kompresi
+
+Tujuan utama perancangan algoritma kompresi adalah untuk mengukur kompleksitas masing-masing algoritma sehingga dapat diketahui perbandingan kompleksitasnya. Perancangan ini meliputi perancangan fungsi-fungsi khusus untuk setiap algoritma, perancangan algoritma encoding (algoritma untuk proses kompresi) dan perancangan algoritma decoding (algoritma untuk proses dekompresi).
+3.2.1 Algoritma LZW
+
+Perancangan algoritma LZW dirancang berdasarkan cara kerja algoritma LZW dalam proses kompresi maupun dekompresi seperti yang telah dijelaskan pada bab 2. Untuk proses kompresi, encoder akan menerima masukan berupa file berisi karakter-karakter ASCII. Kemudian, dilakukan proses encoding dengan cara membaca satu karakter dalam satu waktu, setiap kali ada kode atau index dari dictionary dihasilkan, maka disitu pula kode tersebut dikonversi ke bilangan biner dengan panjang berdasarkan besar dictionary yang sedang digunakan. Contoh, jika besar dictionary yang digunakan adalah 10 bit, berarti setiap kode akan dikonversi menjadi 10 bit dengan melakukan padding setiap kali ada kode yang panjangnya kurang dari 10 bit. Jika bit yang digunakan adalah 12, berarti kode akan dikonversi menjadi 12 bit, demikan seterusnya. Setelah encoder berhasil mengkodekan seluruh karakter maka kumpulan bit hasil konversi digabungkan kembali, lalu bit tersebut dibagi-bagi lagi menjadi 8 bit untuk diubah kembali menjadi karakter-karakter ASCII. Kumpulan karakter ASCII inilah yang menjadi hasil akhir kompresi. Berikut contoh yang mengilustrasikan encoding dengan panjang 10 bit. 
+
+
+ 
+
+
+Gambar 3.1 Ilustrasi Encoding Dengan Panjang 10 Bit
+
+Adapun besar dictionary yang didukung pada algoritma LZW ini adalah 2n dimana n = 8, 9, 10, 11, atau 12. Nilai n adalah nilai bit yang dapat dipilih nantinya pada saat implementasi. Jadi, besar dictionary yang tersedia adalah 256, 512, 1024, 2048, atau 4019. Jika dictionary menggunakan 11 bit (kapasistas dictionary-nya 2048 buah index), maka index maksimum dictionary adalah 2047 dimana index 0-255 merupakan inisialisasi dictionary untuk mengkodekan karakter sedangkan index 256-2047 untuk mengkodekan string. Apabila dictionary sudah penuh, maka tidak akan dilakukan lagi pengisian untuk index yang baru melainkan hanya akan menggunakan pola yang ada untuk encoding berikutnya.
+ 
+Proses decoding adalah kebalikan dari proses encoding yaitu dengan cara terlebih dahulu membaca karakter demi karakter file terkompresi, lalu mengkonversinya kembali menjadi kumpulan bit sehingga tepat merepresentasikan 8 bit tiap karakter. Kemudian, kumpulan bit tersebut dibagi-bagi lagi berdasarkan panjang bit yang digunakan pada saat encoding. Jika pada saat encoding menggunakan 10 bit, maka kumpulan bit dibagi-bagi menjadi 10 bit. Bit yang sudah dibagi lalu dikonversi lagi ke bilangan desimal, bilangan tersebut akan dicari dalam dictionary dan meng-output-kan karakter atau string yang merujuk pada bilangan tersebut. Kumpulan karakter inilah yang menjadi file hasil dekompresi (file asli).
+
+
+ 
+
+Gambar 3.2 Ilustrasi Decoding Dengan Panjang 10 Bit
+
+Untuk melakukan proses encoding  maupun decoding ada beberapa fungsi yang akan digunakan secara khusus oleh algoritma LZW. Fungsi tersebut sebenarnya merupakan rutin atau bagian dari algoritma, hanya saja penulisannya ditulis secara terpisah karena suatu fungsi mungkin akan digunakan beberapa kali oleh encoder maupun decoder. 
+
+3.2.1.1	Fungsi Algoritma LZW
+
+Fungsi algoritma LZW terdiri dari empat bagian yaitu: 
+
+1.	Fungsi pencarian isi dictionary.
+2.	Fungsi pengambilan index dictionary.
+3.	Fungsi pengonversian codeword ke karakter ASCII.
+4.	Fungsi pengonversian karakter ASCII ke codeword.
+
+Tiga pertama dari fungsi di atas merupakan fungsi yang akan digunakan untuk proses encoding, sedangkan sisanya untuk proses decoding. Fungsi tersebut akan dirancang dalam pseudo code lalu kompleksitasnya dihitung.
+
+
+3.2.1.1.1  Fungsi Pencarian Isi Dictionary  
+
+Fungsi ini berguna untuk melakukan pencarian karakter atau string pada dictionary. Fungsi ini memiliki satu parameter sebagai nilai yang dilewatkan ketika mencari nilai tersebut pada dictionary. Dictionary sendiri sebenarnya merupakan sebuah array yang dideklarasikan pada saat encoding. Sehingga, ketika pencarian berlangsung yang terjadi adalah pembandingan string dengan elemen-elemen array yang dilakukan secara terus menerus sampai karakter tersebut ditemukan (string yang sedang dibandingkan sama) atau pointer pengakses elemen array sudah mencapai index maksimum dictionary. Fungsi ini akan mengembalikan true apabila karakter atau string ditemukan, sebaliknya false jika tidak ditemukan. Ketika fungsi ini bernilai true, maka pencarian segera dihentikan untuk mecegah perulangan yang tidak berguna lagi. Fungsi pengecekan isi dictionary dirancang dengan pseudo code berikut ini.
+Tabel 3.8 Pseudo Code Fungsi Pencarian Isi Dictionary
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20	function IsInDictionary(string Str)
+var
+  integer I;
+  boolean Found;
+begin
+  Found ? False;
+  if Length(Str) = 1 then begin
+    Found ? True;
+  end else begin
+    for I ? 256 to Length(Dictionary) - 1 
+    ¬do begin
+      if Str = Dictionary[I] then begin
+        Found ? True;
+        Break;      
+      end;
+    Found ? False;
+    end;
+  end;
+  IsInDictionary ? Found;
+end;	
+
+
+
+
+1
+1+1=2
+1
+
+(1+1+1+1)*(n-257)
+(1+1)*(n-257)
+1*(n-257)
+1*(n-257)
+
+1*(n-257)
+
+
+1
+	Total Waktu Eksekusi	9*(n-257)+4
+
+Fungsi IsInDictionary() ini memiliki kompeksitas 9*(n-257)+4 = 9n-2309 dengan notasi Big-O = O(n), dimana n adalah banyaknya elemen array (besar dictionary). Proses pencarian ini terlebih dahulu memeriksa apakah nilai yang dilewatkan pada fungsi tersebut satu karakter atau tidak. Jika satu karakter maka karakter tersebut dapat dipastikan ada dalam dictionary, karena sebelumnya dictionary telah diinisialisasi dengan 0-255 index karakter ASCII.  Sedangkan untuk pencarian string, fungsi ini hanya perlu menelusuri dictionary dari index ke-256 sampai ke index maksimum dictionary.
+
+
+3.2.1.1.2	Fungsi Pengambilan Index Dictionary
+
+Fungsi pengambilan index dictionary atau GetIndex() adalah fungsi yang berguna untuk mengambil index karakter atau string pada dictionary. Fungsi ini memiliki satu parameter bertipe string sebagai masukan yang dilewatkan ketika mengambil index string tersebut. Proses pengambilan index dilakukan dengan cara menelusuri isi dictionary secara sequential. Jika string ada dalam dictionary, maka fungsi ini mengembalikan index dari string tersebut. Kumpulan index inilah yang sebenarnya kode yang merepresentasikan string asli yang diubah menjadi file terkompresi. Fungsi GetIndex() dirancang dengan pesudo code berikut.
+
+       Tabel 3.9 Pseudo Code Fungsi Pengambilan Index Dictionary
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13	function GetIndex(string Str)
+var
+  integer I, Index;
+begin
+  Index ? 0;
+  for I ? 0 to Length(Dictionary) - 1 do begin
+    if Str = Dictionary[I] then begin
+      Index ? I;
+      Break;
+    end;
+  end;
+  GetIndex ? Index;
+end;	
+
+
+
+1
+(1+1+1+1)*(n-1)
+(1+1)*(n-1)
+1*(n-1)
+1*(n-1)
+
+
+1
+	Total Waktu Eksekusi	8*(n-1)+2
+
+Fungsi ini memiliki kompleksitas 8*(n-1)+2 = 8n-6 dengan notasi Big O = O(n), dimana n adalah besar dictionary.
+
+
+3.2.1.1.3	Fungsi Pengonversian Codeword ke Karakter ASCII
+
+Fungsi CodewordToAscii() adalah fungsi yang berguna untuk mengkonversi codeword (deretan bit) menjadi karakter-karakter ASCII. Codeword sendiri sebenarnya merupakan kumpulan bit yang berasal dari kode yang telah dikonversi ke bilangan biner, sedangkan kumpulan karakter hasil konversi CodewordToAscii() merupakan hasil kompresi yang nantinya disimpan pada file. 
+
+Fungsi ini memiliki satu parameter masukan dengan tipe string, dan mengembalikan karakter-karakter ASCII sebagai hasil konversi codeword yang dilewatkan pada parameternya. Sebelum codeword dikonversi ke karakter ASCII, codeword tersebut  terlebih dahulu diatur supaya habis dibagi 8, dengan melakukan padding sekiranya ada sisa bit, karena karakter ASCII maksimum terdiri dari 8 bit. Fungsi pengonversion codeword ke ASCII dirancangan dengan pseudo code berikut.
+ 
+Tabel 3.10 Pseudo Code Fungsi Pengonversian Codeword ke Karakter ASCII
+
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26	function CodewordToAscii(string CW)
+var
+  string AfterRestRemoved, ActualRest, 
+  ¬ActualCodeword, AsciiOutput;
+  integer Rest, I;
+begin
+  ActualCodeword ? CW;
+  if Length(CW) mod 8 <> 0 then begin
+    Rest ? Length(CW) mod 8;
+    AfterRestRemoved ? SubStr(CW, 1,   
+    ¬Length(CW) - Rest);
+    ActualRest ? BitPadding(SubStr(CW, 
+    ¬(Length(CW) - Rest) + 1, Rest), 8, 
+    ¬'RIGHT');
+   ActualCodeword?AfterRestRemoved+ActualRest;  
+  end;
+
+  I ? 1;
+  while I <= Length(ActualCodeWord) do begin
+    AsciiOutput ? AsciiOutput + 
+    ¬Chr(BinerToDecimal(SubStr(ActualCodeWord,    
+    ¬I, 8)));
+    I ? I + 8;
+  end;
+  CodewordToAscii ? AsciiOutput;
+end;	
+
+
+
+
+
+1
+1+1+1=3
+1+1+1=3
+
+7n-4
+
+
+7n+46
+1+1=2
+
+
+1
+(1+1)*n/8
+
+
+162*n/8
+(1+1)*n/8
+
+1
+	Total Waktu Eksekusi	14n+166*n/8+53
+
+Kompleksitas fungsi ini adalah 14n+166n/8+53, sehingga notasi Big-O nya adalah O(n). Dimana n adalah panjang codeword yang akan dikonversi ke karakter ASCII. Pseudo code pada baris 19-24 memperlihatkan bahwa pengonversian dilakukan dengan mengambil 8 bit setiap perulangan, karena 1 byte karakter ASCII membutuhkan 8 bit, sehingga perulangan yang terjadi adalah n/8 kali, lebih cepat dari n kali perulangan.
+
+
+3.2.1.1.4	Fungsi Pengonversion Karakter ASCII ke Codeword
+
+Fungsi ini berguna untuk mengkonversi karakter ASCII menjadi sekumpulan bit (codeword) dengan panjang bit yang habis dibagi dengan panjang bit yang digunakan pada saat encoding. Fungsi ini nantinya akan digunakan pada saat decoding, sehingga masukan dari fungsi ini adalah karakter-karakter file terkompresi dengan nilai kembalian codeword.
+Tabel 3.11 Pseudo Code Fungsi Pengonversian Karakter ASCII ke Codeword
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26	function AsciiToCodeword(var array of char ¬Buffer; longint intFileSize)
+var
+  string InBiner, EightBits, RemovePadding;
+  integer I, Rest, Bits;
+begin
+  Bits ? SetBitsLength;
+  I ? HeaderIndexPosition + 1;
+  IntFSize ? Length(Buffer);
+
+  while I < IntFSize - 1 do begin
+    InBiner ? DecimalToBiner(Ord(Buffer[I]));  
+    EightBits ? EightBits + BitPadding(InBiner, 
+    ¬8, 'LEFT');    
+    I ? I + 1;
+  end;
+
+  if Length(EightBits) mod Bits <> 0 then begin
+    Rest ? Length(EightBits) mod Bits;
+    RemovePadding ? SubStr(EightBits, 1,  
+    ¬Length(EightBits) - Rest);
+    Result ? RemovePadding;
+  end else begin
+    AsciiToCodeword ? EightBits;
+  end;
+end;	
+
+
+
+
+
+1
+1+1=2
+1+1=2
+
+1+1*(n-1)
+68*(n-1)
+
+52*(n-1)
+(1+1)*(n-1)
+
+
+1+1+1=2
+1+1+1=3
+
+(1+7n-5)*8
+1
+
+1
+	Total Waktu Eksekusi	180n-145
+
+
+Kompleksitas fungsi AsciiToCodeword() ini adalah 180n-145 sehingga notasi Big-O nya adalah O(n). Dimana n adalah jumlah karakter file terkompresi (buffer masukan). Fungsi ini membaca satu karakter dalam satu waktu lalu mengonversinya terlebih dahulu ke bilangan desimal dengan fungsi Ord() kemudian bilangan tersebut dikonversi lagi ke bilangan biner dengan menggunakan fungsi DecimalToBiner(). Kumpulan biner inilah yang menjadi hasil dari konversi fungsi ini.
+
+
+3.2.1.2	Algoritma LZW Encoding 
+
+Perancangan algoritma LZW encoding dilakukan dengan menggunakan beberapa fungsi yang telah dirancang sebelumnya. Algoritma ini akan terlebih dahulu dirancang dalam bentuk flowchart kemudian diterjemahkan ke dalam pesudo code dan kompleksitasnya dihitung.
+ 
+Gambar 3.3 Flowchart LZW Encoding
+Tabel 3.12 Algoritma LZW Encoding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22 
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56	var
+  array of char Buffer;
+  array of string Dictionary;
+  integer I, J, K, Bits, OutputIndex,      
+  ¬LastDictIndex;
+  string CurrentChars, NextChar, ConcatStr, 
+  ¬Header, Codeword;
+  
+begin
+  IntFileSize ? ukuran buffer;
+  SetLengthDictionary ? input dari user;
+  Bits ? panjang bit dari user;
+
+  for I ? 0 to 255 do begin
+    Dictionary[I] ? Chr(I);
+  end;
+
+  LastDictIndex ? 256;
+  J ? 0;
+  CurrentChars ? SubStr(Buffer, 1, 1);
+
+while J < IntFileSize do begin
+  NextChar  ? Buffer[J + 1];
+  ConcatStr ? CurrentChars + NextChar;
+
+  if IsInDictionary(ConcatStr) then begin
+    CurrentChars ? ConcatStr;
+  end else begin
+    OutputIndex ? GetIndex(CurrentChars);
+    Codeword ? Codeword + 
+    ¬BitPadding(DecimalToBiner(OutputIndex),   
+    ¬Bits, 'LEFT');
+    
+    if LastDictIndex < Length(Dictionary)  
+    then begin
+      Dictionary[LastDictIndex] ? ConcatStr;
+    end;
+
+    CurrentChars ? NextChar;
+    LastDictIndex ? LastDictIndex + 1;
+  end;
+
+  if (J = IntFileSize - 1) then begin
+      OutputIndex ? GetIndex(CurrentChars);
+      Codeword ? Codeword + 
+      ¬BitPadding(DecimalToBiner(
+      ¬OutputIndex),Bits, 'LEFT');
+  end;
+  J ? J + 1;
+end;
+  
+Header ? 'lzw|' + IntToStr(Bits)+'|'+ ¬IntToStr(SetDictionaryLength)+'|'+‘$’; 
+
+EncodedStream ? Header + ¬CodewordToAscii(Codeword);	
+
+
+
+
+
+
+
+
+1
+1
+1
+
+(1+1)*256=512
+(1+1+1)*256=768
+
+
+1
+1
+1+7(1)-5=3
+
+1*n=n
+(1+1+1)*n=3n
+(1+1)*n=2n
+
+(9D-2309)*n
+1*n=n
+
+(8D-5)*n
+
+
+(8*2log D+81)n
+
+(1+1)*n=2n
+
+(1+1)*n=2n
+
+
+1*n=n
+(1+1)*n=2n
+
+
+(1+1)*n=2n
+(8D-5)*n
+
+
+(8*2log D+81)n
+
+(1+1)*n=2n
+
+
+
+8
+
+
+(14n+166n/8+53)8
+		
+Kompleksitas algoritma LZW encoding dihitung dari total kompleksitas langkah-langkah berikut:
+
+1.	Baris 10-12 merupakan input dari user berupa besar dictionary yang akan digunakan untuk proses pengompresian. Kompleksitasnya 1+1+1 = 3.
+2.	Baris 14-16 merupakan inisialisasi dictionary dengan karakter ASCII dari index 0-255, membutuhkan waktu 512+728 = 1280.
+3.	Baris 18-20 merupakan inisialisasi berupa penomoran index dictionary yang baru, counter untuk pembacaan isi buffer, dan pembacaan karakter pertama dari buffer. Kompleksitasnya 1+1+3 = 5.
+4.	Baris 22-50 merupakan proses looping untuk mengkodekan file masukan sehingga kompresi bisa dicapai. Kompleksitasnya meliputi:
+a.	Baris 22 yaitu jumlah perulangan dengan kompleksitas n. Dimana n adalah panjang buffer (banyak karakter). 
+b.	Baris 23-24 yaitu pembacaan string berupa gabungan karakter sekarang dengan karakter berikutnya. Kompeksitasnya 3n+2n = 5n.
+c.	Baris 26-41 yaitu pengecekan string pada dictionary dari dua kondisi yang mungkin. Namun, yang dihitung adalah waktu eksekusi yang terbesar yaitu 9Dn-2309n dijumlah dengan kompleksitas pada baris 29-40. Baris 29-32 merupakan pengambilan index dari dictionary sekaligus mengonversinya ke codeword. Kompleksitasnya adalah 8Dn-5n+8*2log Dn+81n = 8Dn+76n+8*2log Dn. Baris 34-37 merupakan pengisian string baru pada dictionary dengan nomor index yang belum terdapat pada dictionary, kompleksitasnya adalah 2n+2n=4n. Sedangkan pada baris 39-40 merupakan penugasan karakter sekarang dengan karakter selanjutnya dan pemberian index dictionary yang baru. Kompleksitasnya adalah n+2n=3n. Jadi, total kompleksitas untuk baris 26-41 adalah 9Dn-2309n+8Dn+76n+8*2logDn+4n+3n=17Dn-2226n+8*2log Dn.
+d.	Baris 43-48 merupakan intruksi untuk mengkodekan karakter terakhir dari input stream sekiranya pointer sudah mencapai EOF. Kompleksitasnya 2n+8Dn-5n+8*2log Dn+81n=8Dn+78n+8*2log Dn. 
+e.	Baris 49 merupakan increment pointer untuk proses encoding berikutnya. Kompleksitasnya 2n.
+5.	Baris 52 merupakan proses pembuatan header yang akan ditulisa pada file akhir kompresi yang memberi informasi bahwa file ini dikompresi dengan algoritma LZW serta informasi besar dictionary  yang digunakan. Kompleksitasnya adalah 8.
+6.	Baris 55 merupakan langkah terkhir dari algoritma LZW encoding yaitu proses pengonversian codeword menjadi karakter-karakter ASCII sebagai hasil akhir proses kompresi. Kompleksitasnya adalah 112n+116n+424.
+
+
+Jadi, kompleksitas algoritma LZW encoding adalah 3+1280+5+n+5n+17Dn-2226n+8*2logDn+8Dn+78n+8*2logDn+2n+8+112n+116n+424=25Dn-1912n+16*2log Dn+1720. dengan notasi Big-O adalah O(Dn), dimana n adalah banyak karakter dalam buffer sedangkan D adalah besar dictionary yang sedang digunakan.
+ 
+
+3.2.1.3	Algoritma LZW Decoding
+
+Perancangan algoritma LZW decoding memiliki prinsip yang sama pada saat perancangan algoritma encoding yaitu menggunakan beberapa fungsi yang telah dirancang sebelumnya. Masukan dari algoritma LZW decoding ini adalah karakter-karakter ASCII dari file terkompresi. Algoritma ini terlebih dahulu dirancang dalam bentuk flowchart kemudian diterjemahkan ke bentuk pseudo code sekaligus dengan penentuan kompleksitasnya. Besar dictionary maupun panjang bit yang digunakan pada saat decoding adalah berdasarkan informasi yang diperoleh dari header pada file terkompresi yang disertakan pada saat encoding. Jadi, pada saat implementasi user tidak perlu melakukan pengaturan besar dictionary secara manual, karena decoder secara otomatis akan menentukan besar dictionary yang diperoleh dari pembacaan header di awal proses decoding. Flowchart algoritma LZW decoding diperlihatkan pada gambar 3.4 berikut.
+
+ 
+                                Gambar 3.4 Flowchart LZW Decoding
+Tabel 3.13 Algoritma LZW Decoding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+60
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72	var;
+ array of char Buffer;
+ array of string Dictionary;
+ String OutputString, FirstChar, Codeword,  
+ ¬Header;
+ Integer I, J, K PrevCode, CurrentCode,  
+ ¬LastDictIndex;
+
+begin 
+ HeaderIndexPosition ? 0;
+  
+ for I ? 0 to IntFileSize do begin
+  if Buffer[I] = ‘$’ then begin
+     HeaderIndexPosition ? I;
+     Break;
+  end;
+ end;
+
+ for I ?0 to HeaderIndexPosition do begin
+   Header ? Header + Buffer[I];
+ end;
+  
+ Exp ? Explode('|', Header);
+
+ if Exp[0] = 'lzw' then begin
+   SetBitsLength ? StrToInt(Exp[1]);
+   SetDictionaryLength ? StrToInt(Exp[2]);
+   SetLength(Dictionary, SetDictionaryLength);
+
+   Codeword ? AsciiToCodeword(Buffer,  
+   ¬IntFileSize);
+
+   for I ? 0 to 255 do begin
+     Dictionary[I] ? chr(I);
+   end;
+
+   LastDictIndex ? 256;
+   PrevCode ? 
+   BinerToDecimal(SubStr(Codeword, 1,  
+   ¬SetBitsLength));
+   OutputString ? Dictionary[PrevCode];
+   FirstChar ? SubStr(OutputString,1, 1);
+   DecodedStream ? OutputString;
+
+   J ? SetBitsLength + 1; 
+   while J <= Length(Codeword) do begin
+     CurrentCode ? 
+     ¬BinerToDecimal(SubStr(Codeword, J, 
+     ¬SetBitsLength));
+     if CurrentCode < LastDictIndex then begin
+       OutputString ? Dictionary[CurrentCode];
+     end else begin
+       OutputString ?   
+       ¬Dictionary[PrevCode] + FirstChar; 
+     end;
+
+     DecodedStream ? DecodedStream + 
+     ¬OutputString;
+     FirstChar ? SubStr(OutputString,1,1);
+
+     if LastDictIndex< Length(Dictionary)   
+     then begin
+       Dictionary[LastDictIndex] ?  
+       ¬Dictionary[PrevCode] + FirstChar;
+     end;
+     PrevCode ? CurrentCode;
+     J ? J + SetBitsLength;
+     LastDictIndex ? LastDictIndex + 1;
+
+   end; {end while}
+  end; {end if}
+end; {end algorithm}	
+
+
+
+
+
+
+
+
+1
+
+(1+1)*n=2n
+(1+1)*n=2n
+1*n=n
+1*n=n
+
+
+
+(1+1)*n=2n
+(1+1+1)*n=3n
+
+
+1+(12n+5)
+
+1+1=2
+1+1+1=3
+1+1+1=3
+1
+
+
+180n-144
+
+(1+1)*256=512
+(1+1+1)*256=768
+
+
+1
+
+
+(18B+16)
+1+1=2
+1+2=3
+1
+
+1+1=2
+(1+1)*n/B=2n/B
+
+(18B+16)*n/B=
+18n+16n/B
+1*n/B=n/B
+(1+1)*n/B=2n/B
+
+(1+1+1)*n/B=
+3n/B
+
+
+
+(1+1)*n/B=2n/B
+(1+2)*n/B=3n/B
+
+(1+1)*n/B=2n/B
+
+(1+1+1+1)*n/B=
+4n/B
+
+1*n/B=n/B
+(1+1)*n/B=2n/B
+(1+1)*n/B=2n/B
+
+
+		
+
+Kompleksitas algoritma LZW decoding dihitung dari total kompleksitas dari baris 9-73 yang mencakup kompleksitas pembacaan header, penginisialisasian, dan proses decoding. Berikut analisis kompleksitas masing-masing step.
+1.	Pembacaan header dimulai dari baris 10-23 Pada baris 10 dilakukan penginisialisasian posisi EOF header dengan kompleksitas 1 (konstant). Sedangkan, pada baris 12-17 dilakukan pencarian posisi EOF header (tanda ‘$’) dengan melakukan penelusuran sebanyak ukuran buffer, sehingga kompleksitasnya adalah 6n. Namun, karena format header merupakan gabungan antara string ‘lzw|’, panjang bit, besar dictionary, dan tanda ‘$’ maka panjang maksimal string header hanya 13 karakter, dengan asumsi LZW menggunakan bit maksimum (contoh: “lzw|12|4096|$”). Dengan demikian, worst-case baris 12-17 ini hanya 6n=6(13)=78. Pada baris 19-21 kompleksitasnya adalah 5n. Namun, karena perulangan hanya sampai ke posisi EOF header saja, maka perulangan maksimum hanya 13 kali juga, sehingga worst-case nya adalah 5n=5(13)=65. Kompeksitas fungsi Explode() pada baris 23 adalah 12n+6, namun karena panjang header maksimum hanya 13 karakter maka worst-case nya adalah 12n+6=12(13)+6=162. Jadi, kompleksitas pembacaan header secara keseluruhan adalah 1+6n+5n+12n+6=23n+7 dengan worst-case  23(13)+7=306.
+
+2.	Baris 26-45 merupakan proses penginisialisasian yang meliputi:
+a.	Baris 25 merupakan pengecekan apakah file yang akan di-decoding merupakan file hasil encoding algoritma LZW. Kompleksitasya adalah 2.
+b.	Baris 26-28 merupakan penginisialisasian panjang bit dan besar dictionary dengan nilai yang diperoleh dari pembacaan header. Kompleksitasnya adalah 3+3+1=7.
+c.	Baris 30 merupakan pengonversian karakter-karakter ASCII ke codeword dengan kompleksitas 180n-144, dimana n adalah ukuran buffer.
+d.	Baris 33-35 merupakan penginisialisasian dictionary dengan karakter ASCII dari index 0-255. Kompleksitasnya adalah 512+768=1280.
+e.	Baris 37-45 merupakan penginisialisasian pointer, dan decoding untuk karakter pertama dengan kompleksitas 1+18B+16+2+3+1+2=18B+25.
+
+Jadi, total kompleksitas untuk penginisialisasian adalah 2+7+180n-144+1280+18B+25=180n+18B+1170, dimana n adalah ukuran buffer, dan B panjang bit yang digunakan.
+
+3.	Baris 46-70 merupakan looping untuk proses decoding, meliputi:
+a.	Baris 46 yaitu jumlah perulangan dengan kompleksitas 2n/B. Dimana n adalah panjang codeword, dan B adalah panjang bit yang sedang digunakan.
+b.	Baris 47 yaitu pengonversian nilai biner tertentu ke nilai desimal, dimana nilai desimal ini merupakan kode dicari pada dictionary. Kompleksitasnya adalah 18n+16n/B.
+c.	Baris 50-55 merupakan proses untuk pengambilan karakter atau string dari dictionary berdasarkan posisi index string tersebut pada dictionary. Kompleksitasnya merupakan waktu eksekusi terbesar dari dua kondisi yang mungkin, yaitu n/B+3n/B=4n/B.
+d.	Baris 57-59 merupakan proses untuk menampung string yang diperoleh dari baris 50-55, kumpulan string ini nantinya merupakan hasil proses decoding. Kompleksitasny adalah 5n/B.
+e.	Baris 61-65 merupakan proses pengisian dictionary dengan index dari nilai yang baru. Kompleksitasnya adalah 2n/B+4n/B=6n/B.
+f.	Baris 66-68 merupakan langkah akhir dari proses decoding yaitu penginisialisasian untuk proses decoding berikutnya. Kompleksitasnya adalah n/B+2n/B+2n/B=5n/B.
+
+         Kompleksitas dari proses decoding dari baris 46-70 adalah 2n/B+18n+16n/B +4n/B+5n/B+6n/B+5n/B = (18n+38n/B)*8 = 144n+304n/B, dengan n adalah panjang buffer, dan B adalah panjang bit yang sedang digunakan.
+
+Jadi, kompleksitas algoritma LZW decoding merupakan total kompleksitas pembacaan header, kompleksitas penginisialisasian, dan kompleksitas proses decoding, yaitu 306+180n+18B+1170+144n+304n/B=324n+304n/B+18B+1476 dengan notasi Big-O adalah O(n), dimana n adalah panjang buffer dan B adalah panjang bit yang sedang digunakan.
+
+
+3.2.2	Algoritma Arithmetic Coding
+
+Proses encoding maupun decoding algoritma Arithmetic Coding telah dijelaskan pada bab sebelumya. Prinsip dasar algoritma Arithmetic Coding adalah mengkodekan pesan dengan angka floating point pada interval [0, 1). Namun, karena encoder maupun decoder memiliki keterbatasan dalam pengolahan floating point yang besar, maka pada penelitian ini implementasi algoritma Arithemtic Coding adalah menggunakan bilangan integer.
+	
+	Usaha pertama untuk implementasi bilangan integer adalah menggantikan interval 0-1 dengan interval 0000h-FFFFh (16 bit bilangan integer), dengan cara melakukan modifikasi terhadap tabel probabilitas agar range tidak melebihi n bit, yaitu menskalakan ulang frekuensi kemunculan simbol dengan cara membagi frekuensi setiap simbol dengan n bit, sehingga frekuensinya tidak melebihi n bit, diman n adalah panjang bit yang digunakan pada saat implementasi, 16 atau 32 bit. 
+	
+	Proses encoding dari algoritma Arithmetic Coding adalah dengan cara terlebih dahulu menentukan tabel probabilitas dengan menggunakan frekuensi simbol-simbol yang telah diskalakan, kemudian mengkodekan setiap karakter dengan cara meng-shift out setiap ada MSB (Most Significant Bits) yang sama, sekaligus bit-bit penyebab terjadinya kondisi underflow seperti yang telah dijelaskan pada bab sebelumnya. Kumpulan bit hasil shift-out inilah yang akan dikonversi ke karakter-karakter ASCII sebagai hasil kompresi. Pada saat penulisan hasil kompresi ke file, maka tabel probabilitas yang digunakan pada saat encoding perlu disertakan sebagai file header, karena informasi ini kelak dibutuhkan pada saat decoding. Jadi, untuk proses decoding langkah pertama yang dilakukan decoder adalah membaca probabilitas, lalu mengkonversi bit-bit yang diperoleh pada saat decoding ke bilangan desimal, lalu mengoutputkan karakter yang intervalnya mencakup bilangan tersebut. Kumpulan karakter ini merupakan hasil decoding.
+
+	Sama hal nya seperti algoritma LZW, untuk merancang algoritma Arithmetic Coding, ada beberapa fungsi khusus yang dibutuhkan oleh algoritma Arithmetic Coding untuk melakukan proses encoding maupun decoding, fungsi-fungsi tersebut akan dirancang secara terpisah, karena lebih efesien untuk penentuan kompleksitas maupun pada saat implementasi.
+
+	
+3.2.2.1	Fungsi Algoritma Arithmetic Coding
+
+Fungsi-fungsi algoritma Arithmetic Coding terdiri dari 6 bagian yaitu:
+
+1.	Fungsi Oppositee Bit 
+2.	Fungsi penggeser MSB (Most Significant Bit)
+3.	Fungsi penggeser Bit Underflow
+4.	Fungsi pembuatan tabel probabilitas
+5.	Fungsi penghasil bit, dan
+6.	Fungsi pembaca header
+
+Fungsi-fungsi di atas akan dirancang dalam bentuk psudo code lalu kompleksitasnya dihitung.
+
+3.2.2.1.1 Fungsi Opposite Bit
+
+Fungsi opposite bit ada fungsi yang berguna untuk menghasilkan kebalikan (lawan jenis) dari bit tertentu. Contoh, bit ‘1’ opposite bit nya adalah ‘0’, dan sebaliknya. Masukan dari fungsi ini merupakan bit dengan tipe string, dan menghasilkan lawan jenis dari bit tersebut.
+
+Tabel 3.14 Pseudo Code Fungsi Opposite Bit
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8	function OppositeBit(string Bit)
+begin
+  if Bit = '0' then begin
+    OppositeBit ? '1';
+  end else begin
+    OppositeBit ? '0';
+  end;
+end;	
+
+1
+1
+
+1
+	Total Waktu Eksekusi	1+max(1,1)=2
+
+Kompleksitas dari fungsi ini adalah 1+1=2, sehingga waktu eksekusinya adalah konstan atau O(1).
+
+
+3.2.2.1.2	Fungsi Penggeser MSB
+
+Fungsi ShiftMSB() ini bertujuan untuk menggeser MSB dari sederatn bit, sekaligus menambahkan bit ‘ShiftIn’ pada LSB deretan bit tersebut. Contoh: ShiftMSB(‘10110’, ‘1’) akan menghasilkan 01101.
+
+Tabel 3.15 Pseudo Code Fungsi Penggeser MSB
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5	function ShiftMSB(string Biner, ShiftIn)
+begin
+    ShiftMSB?Copy(Biner, 2, Length(Biner) 
+    ¬- 1) + ShiftIn;
+end;	
+
+
+1+1+1+1+1=5
+	Total Waktu Eksekusi	5
+
+Kompleksitas dari fungsi ini adalah 1+1+1+1+1=5, sehingga waktu eksekusinya adalah konstan atau O(1). 
+
+3.2.2.1.3	Fungsi Penggeser Bit Underflow
+
+Fungsi ini hampir sama dengan fungsi penggeser MSB, hanya saja fungsi ini berguna untuk menggeser atau menghilangkan bit kedua (second MSB) dari sederetan bit sekaligus menambahkan bit ‘ShiftIn’ pada LSB deretan bit tersebut. Contoh, ShiftUnderflow(‘11101011’, ‘0’) maka hasilnya adalah  11010110.
+
+Tabel 3.16 Pseudo Code Fungsi Penggeser Bit Underflow
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10	function ShiftUnderflow(string Biner; ShiftIn)
+var
+  string FirstBit, ThirdBit;
+begin
+  FirstBit ? Copy(Biner, 1, 1);
+  ThirdBit ? Copy(Biner, 3, Length(Biner) 
+  ¬- 1);
+  ShiftUnderflow ? FirstBit + ThirdBit + 
+  ¬ShiftIn;
+end;	
+
+
+
+1+1=2
+1+1+1+1=4
+
+
+1+1+1=3
+	Total Waktu Eksekusi	2+4+3=9
+
+Kompleksitas dari fungsi ini adalah 2+3+4=9, sehingga waktu eksekusinya juga konstan atau O(1).
+
+
+3.2.2.1.4	Fungsi Pembuatan Tabel Probalitas
+
+Fungsi ini bertujuan untuk membuat tabel probalitas berdasarkan frekuensi kemunculan simbol. Sehingga setiap simbol dari input stream akan memiliki range tertentu  yang mempunyai batas bawah dan batas atas. Batas bawah simbol sekarang merupakan batas atas dari simbol sebelumnya, sedangkan batas atasnya merupakan penjumlahan frekuensi dengan batas atas simbol sebelumnya.  Fungsi ini memiliki dua parameter masukan dengan tipe array yaitu Lower dan Upper, kedua parameter ini berfungsi untuk menampung batas bawah dan batas atas dari suatu simbol sehingga dapat ditentukan intervalnya. Fungsi ini tidak memilki nilai balik, sehingga pada saat implementasi fungsi ini hanya diperlakukan sebagai suatu prosedur pembuatan probalitas daripada sebuah fungsi.
+
+
+Tabel 3.17 Pseudo Code Fungsi Pembuatan Tabel Porbalitas
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15	function BuildProbabilities(var array of char Lower,Upper);
+var
+  char Temp; 
+  integer I;
+  array of char Frequency;
+begin
+  Upper[Temp] ? 0;
+  for I ? 0 to 255 do begin
+    Lower[Chr(I)] ? Upper[Temp];
+    Upper[Chr(I)] ? Frequency[Chr(I)] + 
+    ¬Upper[Temp];
+    Temp ? Chr(I);
+  end;
+end;	
+
+
+
+
+
+
+1+1=2
+(1+1)*n=2n
+(1+1+1+1)*n=4n
+(1+1+1+1+1+1)*n=6n
+(1+1)*n=2n
+	Total Waktu Eksekusi	14n+2
+
+Kompleksitas fungsi pembuatan probalitas ini adalah 14n+2 dengan notasi Big-O=O(n). Namun, karena perulangan maksimum hanya 255 kali (n=255), maka worst-case dari algoritma ini adalah 14n+2=14(255)+2=3572.
+
+
+3.2.2.1.5	Fungsi Penghasil Bit
+
+Fungsi penghasil bit atau fungsi OutputBits() merupakan fungsi yang berguna untuk menambah beberapa bit ‘0’ pada sederetan bit sehingga panjang bit tersebut habis dibagi 8. Fungsi ini nantinya berguna untuk memastikan bit hasil encoding memiliki cukup bit sebelum dikonversi ke karakter-karakter ASCII.
+
+Tabel 3.18 Pseudo Code Fungsi Penghasil Bit
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13	function OutputBits(string Biner; integer Padding)
+var
+  integer N, Modulus, Ins;
+begin
+  N ? Length(Biner);
+  Modulus ? N mod Padding;
+  if Modulus <> 0 then begin
+    Ins ? N + (Padding - Modulus);
+    Biner?BitPadding(Biner,Ins, 'RIGHT');
+  end;
+  OutputBits ? Biner;
+end;	
+
+
+
+
+1+1=2
+1+1=2
+1
+1+1+1=3
+1+99=100
+
+1
+
+	Total Waktu Eksekusi	109
+Kompleksitas fungsi OutputBits() ini adalah 2+2+1+3+100+1=109, dengan notasi Big-O adalah O(1).
+
+
+3.2.2.1.6	Fungsi Pembaca Header
+
+Fungsi ini berguna untuk membaca header pada file terkompresi yang disertakan  pada saat encoding, dimana header ini merupakan sejumlah informasi berupa tipe file, tabel probalitas dan ukuran file. Informasi tipe file berguna untuk menandakan bahwa file tersebut telah dikompresi dengan algoritma Arithmetic Coding, tabel probalitas berguna untuk proses decoding, sedangkan ukuran file merupakan informasi penanda berhentinya proses decoding 
+
+Tabel 3.19 Pseudo Code Fungsi Pembaca Header
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31	function ReadACHeader();
+var
+  integer I;
+  string Dexp;
+begin
+  Dexp ? Explode('|', Buffer);
+  ACFileType ? Dexp[0];
+
+  if ACFileType = 'ac' then begin
+    TotalScaled ? 0;
+    for I ? 1 to 256 do begin
+      Frequency[Chr(I - 1)] ? 
+      ¬StrToInt(Dexp[I]);
+      TotalScaled ? TotalScaled + 
+      ¬StrToInt(Dexp[I]);
+    end;
+
+    HeadMod ? StrToInt(Dexp[257]);
+    HeadFSize ? StrToInt(Dexp[258]);
+    BuildProbabilities(SymbolLow,   
+    ¬SymbolHigh);
+    HeaderIndexPosition ? 0;
+    for I ? 0 to IntFileSize - 1 do begin
+     if Buffer[I] = ‘$’ then 
+     begin
+       HeaderIndexPosition ? I;
+       Break;
+     end;
+    end;
+  end;
+end;	
+
+
+
+
+12n+6
+1+1=2
+
+1
+1
+2*256=512
+
+6*256=1536
+
+3*256=768
+
+
+3*256=768
+3*256=768
+
+3586
+1
+3*(n-1)=3n-3
+2*(n-1)=2n-2
+
+1*(n-1)=n-1
+1*n=n
+	Total Waktu Eksekusi	19n+7943
+Kompleksitas fungsi pembacaan header di atas adalah 19n+7943 dengan notasi Big-O=O(n), dimana n merupakan ukuran buffer. 
+
+
+3.2.2.2	Algoritma Arithmetic Coding Encoding
+
+Perancangan algoritma Arithmetic Coding encoding dimulai dengan membuat terlebih dahulu flowchart nya seperti pada gambar 3.5, lalu dari flowchart tersebut dikembangkan menjadi pseudo code sekaligus dengan penentuaan kompleksitasnya seperti pada tabel 3.20.
+
+ 
+Gambar 3.5 Flowchart Arithmetic Coding Encoding
+Tabel 3.20 Algoritma Arithmetic Coding Encoding 
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86
+87
+88
+89
+90
+91
+92
+93
+94
+95
+96
+97
+98
+99
+100
+101
+102
+103
+104
+105
+106
+107
+108
+109
+110
+111
+112
+113
+114
+115
+116
+117	var
+  array Frequency, Buffer;
+  integer I, J, Low, High, Underflow, Range; 
+  string HighToBiner, LowToBiner,  
+  ¬EncodedBits,Header;
+
+Begin
+  IntFileSize ? length(Buffer);
+  for I ? 0 to 255 do begin
+    Frequency[Chr(I)] ? 0;
+  end;
+
+  for I ? 0 to IntFileSize - 1 do begin
+    Frequency[Buffer[I]] ? 
+    ¬Frequency[Buffer[I]] + 1;
+  end;
+
+  Factor ? Ceil(IntFileSize / Pow(2, 14));
+  TotalScaled ? 0;
+
+  for I ? 0 to 255 do begin
+   if Frequency[Chr(I)]>Factor then begin
+     Frequency[Chr(I)] ? Floor(   
+     ¬Frequency[Chr(I)]/Factor );
+   end else if Frequency[Chr(I)]<>0 then begin
+     Frequency[Chr(I)] ? 1;
+   end;
+
+   TotalScaled ? TotalScaled + 
+   ¬Frequency[Chr(I)];
+  end;
+
+  BuildProbabilities(SymbolLow, SymbolHigh);
+ 
+  HeadMod ? 0;
+  Low  ? $0000;
+  High ? $FFFF; 
+  Underflow ? 0;
+  I ? 0; 
+  while I < IntFileSize do begin
+    Range ? (High - Low) + 1;
+    High  ? Low + Floor(Range * 
+    ¬SymbolHigh[Buffer[I]]/TotalScaled) - 1;
+    Low ? Low + Floor(Range * 
+    ¬SymbolLow[Buffer[I]] / TotalScaled);
+    LowToBiner ? 
+    ¬BitPadding(DecimalToBiner(Low), 16,
+    ¬'LEFT');
+    HighToBiner ? 
+    ¬BitPadding(DecimalToBiner(High),16, 
+    ¬'LEFT');
+
+    for J ? 1 to M do begin
+      if LowToBiner[1] = HighToBiner[1] then 
+      begin            
+        EncodedBits ? EncodedBits + 
+        ¬LowToBiner[1];
+        while Underflow > 0 do begin
+           EncodedBits ? EncodedBits + 
+           ¬OppositeBit(LowToBiner[1]);
+           Underflow ? Underflow - 1;
+        end;
+        
+        LowToBiner?ShiftMSB(LowToBiner, '0');
+        HighToBiner?ShiftMSB(HighToBiner, 
+        ¬'1');
+      end else begin
+      if (SubStr(LowToBiner, 2, 1) = '1') 
+      ¬and (SubStr(HighToBiner, 2, 1)= '0')    
+      ¬then begin
+        Underflow ? Underflow + 1;
+        LowToBiner?ShiftUnderflow(
+        ¬LowToBiner, '0');
+        HighToBiner ?ShiftUnderflow(
+        ¬HighToBiner, '1');
+      end else begin
+        Low?BinerToDecimal(LowToBiner);
+        High?BinerToDecimal(HighToBiner);
+        break; 
+      end;
+     end;
+    end; { end for } 
+    I ? I + 1;
+  end; { end while }
+
+  EncodedBits?EncodedBits + LowToBiner[2];
+  while Underflow >= -16 do begin 
+    EncodedBits ? EncodedBits + 
+    ¬OppositeBit(LowToBiner[2]);
+    Underflow ? Underflow – 1;
+  end;
+
+  if Length(EncodedBits) mod 8<>0 then begin
+    HeadMod ? 8-(Length(EncodedBits)mod 8);  
+  end;
+
+  EncodedBits?OutputBits(EncodedBits, 8);
+  Header ? 'ac|';
+
+  for I ? 0 to 255 do begin
+    Header ? Header + 
+    ¬IntToStr(Frequency[Chr(I)]) + '|';
+  end;
+
+  Header ? Header + IntToStr(HeadMod) + '|' +   
+  ¬IntToStr(IntFileSize) + '|' + ‘$’;
+  EncodedStream ? Header;
+  
+  I ? 1;
+  while I <= Length(EncodedBits) do begin
+    EncodedStream ? EncodedStream +   
+    Chr(BinerToDecimal(Copy(EncodedBits, 
+    ¬I, 8))) ;
+    I ? I + 8;
+  end;
+end;	
+
+
+
+
+
+
+1+1=2
+2*256=512
+3*256=768
+
+
+3*(n-1)=3n-3
+(1+1+1+1+1+1)*(n-1)=6n-6
+
+
+1+1+1+9=12
+1
+
+(1+1)*256=512
+3*256=768
+(3+7+3)*256=
+3328
+3*256=798
+3*256=768
+
+
+
+(1+1+1+1)=4
+
+
+3572
+
+1
+1
+1
+1
+1
+1*n=n
+(1+1+1)*n=3n
+(1+1+7+5)*n=
+14n
+(1+1+7+4)*n=
+13n
+
+(1+99+129)*n=
+229n
+
+(1+99+129)*n=
+229n
+
+(1+1)M*n=2Mn
+(1+1+1)M*n=3Mn
+
+
+(1+1+1)M*n=3Mn
+1*M*U*n=MUn
+(1+1+2+1)M*U*n =5MUn
+(1+1)M*U*n=
+2MUn
+
+(1+5)M*n=6Mn
+(1+5)M*n=6Mn
+
+
+(2+1+2+1)M*n=
+6Mn
+
+(1+1)M*n=2Mn
+
+(1+9)M*n=10Mn
+
+(1+9)M*n=10Mn
+
+197*M*n=197Mn
+197*M*n=197Mn
+1*M*n=Mn
+
+
+
+(1+1)*n=2n
+
+
+(1+1+1)=3
+1*16=16
+(1+1+2+1)*16=
+80
+(1+1)*16=32
+
+
+(1+1+1)=3
+(1+1+1+1)=4
+
+
+(1+109)=110
+1
+
+(1+1)*256=512
+(1+1+1+1+1+1)*256=1536
+
+
+
+9
+1
+
+1
+(1+1)*n=2n/8
+
+(1+1+1+196+1)*n=200n/8
+(1+1)*n=2n/8
+
+		
+Untuk memudahkan penentuan kompleksitas algoritma Arithmetic Coding encoding pada tabel 3.20, maka penghitungan kompleksitas dibagi menjadi tiga bagian yaitu:
+
+1.	Penghitungan kompleksitas proses pembuatan probalitas
+2.	Penghitungan kompleksitas proses encoding, dan
+3.	Penghitungan kompleksitas penulisan hasil encoding ke file akhir
+
+Jadi, kompleksitas algoritma Arithmetic Coding encoding merupakan jumlah ke tiga kompleksitas di atas.
+
+1.	Penghitungan kompleksitas proses pembuatan probalitas
+Kompleksitas proses pembuatan probalitas dihitung dari baris 8-33. Baris 8 merupakan intruksi penginisialisasian panjang buffer  (banyak karakter dari input stream), kompleksitasnya adalah 2. Pada baris 9-11 merupakan penginisialisasian untuk memastikan frekuensi karakter-karakter ASCII semuanya 0, karena ide pembuatan probalitas adalah dengan  menghitung frekuensi setiap simbol dari input stream, kompleksitasnya adalah 512+768=1280. Baris 13-31 merupakan penghitungan frekuensi setiap simbol sekaligus melakukan penskalaan agar frekuensi kemunculan setiap simbol tidak lebih dari 16 bit, kompleksitasnya 9n+13+512+768+max(3328,768)+4=9n+ 4625, dengan n adalah panjang buffer. Baris 33 merupakan pembuatan probalitas dengan pemanggilan fungsi BuildProbalitas() berdasarkan nilai low dan high yang telah diskalakan, kompleksitasnya adalah 3572.
+Jadi, kompleksitas proses pembuatan probalitas secara keseluruhan adalah 2+1280+9n+4625+3572=9n+9479, dimana n adalah banyaknya karakter dalam buffer.
+
+2.	Penghitungan kompleksitas proses encoding, dan
+Penentuan kompleksitas pada bagian ini dihitung dari baris 35-85. Baris 35-39 adalah bagian penginisialisasian sebelum proses encoding dimulai, kompleksitasnya adalah 1+1+1+1+1=5 (constant time). Baris 40 adalah intruksi perulangan untuk proses encoding sebanyak n, dimana n adalah panjang buffer, kompleksitasnya adalah n. Baris 41-51 merupakan inti dari algoritma Arithmetic Coding yaitu penghitungan nilai low dan high secara aritmatika, nilai-nilai ini kemudian akan dikonversi lagi ke bilangan biner dengan panjang 16 bit, tujuannya adalah agar dapat ditentuan MSB nya sebagai proses untuk menghasilkan bit-bit sebagai output dari proses encoding, kompleksitasnya adalah 3n+14n+13n+229n+229n = 488n. Baris 53-83 merupakan bagian perulangan untuk memeriksa MSB kedua nilai variable low dan high, penghitungan kompleksitas perulangan ini adalah mengambil waktu yang terbesar dari 2 kondisi yang mungkin di dalam perulangan tersebut, yaitu pada baris 56-67 dengan waktu eksekusi 3Mn+MUn+5MUn+2MUn+6Mn+6Mn=8MUn+15Mn, dimana n adalah ukuran buffer,  M merupakan banyaknya perulangan untuk melakukan pemeriksaan nilai MSB low dan high, dimana nilai M adalah nilai yang diprediksi sampai nilai MSB low dan high berbeda, dan biasanya nilai tersebut jauh lebih kecil dari ukuran n, mungkin kurang lebih dari 16 digit, sehingga terlalu “mahal” untuk menyamakan nilai M dengan n, sedangkan U adalah perulangan untuk kondisi underflow yang masalah panjangnya juga hampir mirip dngan M, yaitu mungkin hanya beberapa bit untuk setiap perulangan. Jadi, kompleksitas perulangan pada baris 53-83 ini adalah 5Mn+8MUn+15Mn =8MUn+20Mn. Baris 84 merupakan penaikan nilai pointer untuk mengkodekan karakter selanjutnya dengan kompleksitas 2n. Jadi, kompleksitas proses encoding pada bagian ini adalah 5+n+488n+8MUn+20Mn+2n=8MUn+20Mn+491n+5 dengan n adalah banyaknya karakter dalam buffer, M banyaknya perulangan untuk pemeriksaan nilai MSB low dan high, U adalah perulangan untuk kondisi underflow.
+
+3.	Penghitungan kompleksitas penulisan hasil encoding ke file akhir.
+Baris 87-92 merupakan intruksi pengumpulan bit-bit yang telah diperoleh dari proses encoding dari baris 35-85 sekaligus bit penyebab kondisi underflow. Kumpulan bit inilah yang nantinya akan dikonversi ke karakter-karakter ASCII sebagai hasil akhir proses kompresi, kompleksitasnya adalah 3+16+80+32=131. Baris 94-108 merupakan intruksi untuk penulisan header untuk file terkompresi yang berisi informasi tipe algoritma yang digunakan, tabel probalitas, dan panjang buffer sebelum dikompresi, dengan kompleksitasnya 4+3+110+1+512+1536+9+1=2176. Baris 110-117 merupakan perulangan untuk mengkonversi kumpulan bit yang dihasilkan dari baris 87-92 menjadi karakter-karakter ASCII. Kumpulan karakter tersebut akan ditampung pada variabel EncodedStream sebagai hasil akhir proses kompresi, kompleksitasnya adalah 1+2n/8+200n/8+2n/8 = 204n/8 + 1, dimana n adalah panjang bit. Sehingga kompleksitas pada bagian ini adalah 131+2176+(204n/8+1)*8=204n+2315 dimana n adalah banyaknya karakter dalam buffer. 
+
+Jadi, kompleksitas algoritma Arithmetic Coding encoding secara keseluruhan adalah 9n+9479+8MUn+20Mn+491n+5+204n+2315 = 8MUn+20Mn+991n+11799, dengan notasi Big-O adalah O(MUn) dimana n adalah banyaknya karakter dalam buffer, M adalah jumlah perulangan untuk pemeriksaan nilai MSB low dan high, dan U adalah jumlah banyaknya perulangan untuk kondisi underflow, dimana nilai M dan U relatif kecil untuk nilai n tertentu. 
+
+
+3.2.2.3	Algoritma Arithmetic Coding Decoding
+
+Untuk proses decoding algoritma Arithmetic Coding, input adalah file terkompresi yang tediri dari karakter-karakter ASCII. Kumpulan karakter tersebut terlebih dahulu akan dikonversi ke dalam bentuk codeword. Kemudian untuk proses inisialisasi, decoder akan mengambil n bit pertama untuk di-decoding menjadi karakter asli, dimana n adalah panjang bit yang digunakan pada saat encoding (dalam hal ini 16 bit).
+
+	Sebelum proses decoding dimulai, decoder harus terlebih dahulu membaca header yang terdapat pada file terkompresi untuk memastikan bahwa encoder dan decoder menggunakan tabel probalitas yang sama untuk proses encoding maupun decoding. Proses decoding dicapai dengan melihat karakter yang intervalnya mencakup codeword yang telah dikonversi ke bilangan desimal. Satu hal yang perlu diperhatikan pada saat decoding adalah menentukan kapan berhentinya proses decoding, karena perulangan pada saat decoding tidak tergantung pada ukuran file masukan, karena sebelumnya semua karakter pada file masukan telah dikonversi terlebih dahului ke codeword yang panjangnya mungkin sampai 8 kali lipat dari ukuran semula. Jadi, solusi untuk masalah ini adalah dengan menyertakan tanda EOF pada file asli, sehingga pada saat decoder menemukan tanda tersebut maka proses decoding dapat segera dihentikan. Solusi lain untuk masalah ini adalah dengan menyertakan ukuran file asli pada file terkompresi, sehingga dengan informasi tersebut decoder dapat mengetahui jumlah perulangan berdasarkan ukuran file tersebut. Dalam penelitian ini, yang digunakan adalah solusi yang terakhir, karena kurang efektif memilih karakter EOF yang unik dari 256 karakter ASCII yang mungkin sudah digunakan pada file asli. Flowchart algoritma Arithmetic decoding ditunjukkan pada gambar 3.6 berikut.
+
+                                 
+                                 Gambar 3.6 Flowchart Arithmetic Coding Decoding
+
+Tabel 3.21 Algoritma Arithmetic Coding Decoding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57
+58
+59
+61
+62
+63
+64
+65
+66
+67
+68
+69
+70
+71
+72
+73
+74
+75
+76
+77
+78
+79
+80
+81
+82
+83
+84
+85
+86	var
+  string Code;
+  integer Low, High, I, J, Range, Temp, B;
+  string HighToBiner, LowToBiner, Opposite,   
+  ¬EncodedBits, DecodedSymbols;
+  char CurrentSymbol;
+
+begin
+  ReadACHeader();
+  if 'ac' = ACFileType then begin
+    I ? HeaderIndexPosition + 1;
+    while I < IntFileSize do begin
+      EncodedBits ? EncodedBits + 
+      ¬BitPadding(DecimalToBiner(Ord(
+      ¬Buffer[I])), 8, 'LEFT');
+      I ? I + 1;
+    end;
+
+    EncodedBits ? Copy(EncodedBits, 1,   
+    ¬Length(EncodedBits) - HeadMod);    
+    B ? 1;
+    Code ? Copy(EncodedBits, B, 16);
+    Low ? $0000;
+    High ? $FFFF;
+    J ? 0;
+    while J < HeadFSize do begin
+      Range ? (High - Low) + 1;
+      Temp ? Floor( ((BinerToDecimal(Code) – 
+      ¬Low + 1) * TotalScaled) / Range);
+      
+      for I ? 0 to 255 do begin
+        if (Temp >= SymbolLow[Chr(I)]) and 
+        ¬(Temp <SymbolHigh[Chr(I)]) then begin
+          CurrentSymbol ? Chr(I);
+          DecodedSymbols ? DecodedSymbols + 
+          ¬CurrentSymbol;
+        end;
+      end;
+
+      High ? Low + Floor(Range *  
+      ¬SymbolHigh[CurrentSymbol] /  
+      ¬TotalScaled) - 1;
+      Low ? Low + Floor(Range * 
+      ¬SymbolLow[CurrentSymbol] / 
+      ¬TotalScaled);
+
+      LowToBiner ? BitPadding(
+      ¬DecimalToBiner(Low), 16, 'LEFT');
+      HighToBiner ? BitPadding(
+      ¬DecimalToBiner(High), 16, 'LEFT');
+
+      for I ? 1 to M do begin
+        if LowToBiner[1] = HighToBiner[1] then 
+        begin
+          LowToBiner  ? ShiftMSB(LowToBiner,    
+          ¬'0');
+          HighToBiner ? ShiftMSB(HighToBiner, 
+          ¬'1');
+          B ? B + 1;
+          Code ? Copy(EncodedBits, B, 16);
+        end else begin
+          if (SubStr(LowToBiner, 2, 1) = '1') 
+          ¬and (SubStr(HighToBiner, 2, 1) = 
+          ¬'0') then begin 
+            LowToBiner ? ShiftUnderflow(
+            ¬LowToBiner, '0');
+            HighToBiner ? 
+            ¬ShiftUnderflow(HighToBiner, '1');
+            B ? B + 1;
+            Opposite ? OppositeBit(Copy(
+            ¬EncodedBits, B, 1));
+            Code ? Opposite + Copy(
+            ¬EncodedBits, B + 1, 15);
+            
+          end else begin
+            Low?BinerToDecimal(LowToBiner);
+            High?BinerToDecimal(HighToBiner);
+            Break; 
+          end;
+        end;
+      end; { end for }
+      J ? J + 1;
+    end; { end while }
+DecodedStream ? DecodedSymbols;
+end;	
+
+
+
+
+
+
+
+19n+7943
+1
+1+1=2
+1*n=n
+
+(1+1+65+50)=
+117
+1+1*n=2n
+
+
+
+1+1+1+1=4
+1
+1+1=2
+1
+1
+1
+1*n=n
+(1+1+1)*n=3n
+(1+7+196+4)*n=208n
+
+2*256*n=512n
+
+7*256*n= 1792n
+2*256*n=512n
+
+2*256*n=512n
+
+
+
+
+(1+1+7+4)*n=
+13n
+
+(1+1+7+3)*n=
+12n
+
+(1+99+129)*n=
+229n
+(1+99+129)*n=
+229n
+
+(1+1)M*n=2Mn
+(1+1+1)M*n=3Mn
+
+
+(1+5)M*n=6Mn
+
+(1+5)M*n=6Mn
+(1+1)M*n=2Mn
+(1+1)M*n=2Mn
+
+(1+2+1+2)M*n=
+3Mn
+
+
+(1+9)M*n=10Mn
+
+(1+9)M*n=10Mn
+(1+1)M*n=2Mn
+
+(1+2+1)M*n=4Mn
+
+(1+2+1)M*n=4Mn
+
+
+(197)M*n=197Mn
+(197)M*n=197Mn
+1*M*n=Mn
+
+
+
+(1+1)*n=2n
+
+1*n=n
+
+		
+
+Kompleksitas algoritma Arithmetic Coding decoding meliputi kompleksitas pembacaan header, penginisialisasian, proses decoding, dan  penampungan karakter-karakter hasil decoding.
+	
+	Baris 9 adalah fungsi pembacaan header yang mecakup pembacaan probalitas, tipe file, dan ukuran file asli, kompleksitasnya adalah 19n+7943, n adalah ukuran buffer. Baris 10-25 merupakan bagian pengisialisasian mencakup pengonversian karakter-karakter file terkompresi ke codeword, penginisialisasian nilai kode, low, high, kompleksitasnya adalah 1+2+n+117+2n+4+1+2+1+1+1 = 3n+130. Baris 26-84 adalah baris untuk proses decoding, meliputi: baris 27-29 merupakan intruksi untuk pengonversian codeword menjadi kode yang akan dicari pada tabel probalitas, kompleksitasnya 3n+208n=211n. Baris 31-38 adalah baris untuk mencari karakter yang memiliki korespodensi dengan kode yang diperoleh dari baris 27-29. Kumpulan karakter tersebut merupakan hasi akhir proses decoding, kompleksitasnya 512n+1792n+512n+512n = 3328n. Baris 40-50 merupakan bagian dari pemberian nilai high dan low yang baru melalui proses arithmetic, sekaligus mengkonversinya ke bilangan biner untuk proses decoding selanjutnya, kompleksitasnya adalah 13n+12n+229n+229n = 483n. Baris 52-82 merupakan perulangan untuk pemeriksaan nilai MSB low dan high sebanyak M, dimana waktu yang diambil adalah waktu eksekusi terbesar dari dua kondisi yang mungkin, kompleksitasnya adalah 5Mn+3Mn+10Mn+10Mn+2Mn+4Mn+4Mn+197Mn+197Mn+Mn =  433Mn. Baris 83 adalah increment pointer  untuk proses decoding selanjutnya, kompleksitasnya 2n. Baris 85 adalah baris untuk penampungan karakter-karakter hasil proses decoding, kompleksitasnya n.
+
+Jadi, kompleksitas algoritma Arithmetic Coding decoding secara keseluruhan adalah 19n+7943+3n+130+211n+3328n+483n+433Mn+2n+n = 433Mn+4047n+8073 dengan notasi Big-O adalah O(Mn), dimana M adalah jumlah perulangan untuk memeriksa MSB nilai low dan high yang tidak terlalu besar, sedangkan n adalah banyak karakter dalam buffer.
+
+
+3.2.3	Algoritma RLE dan BWT
+
+Dasar teori tentang algoritma RLE juga telah dijelaskan seperti algoritma-algoritma sebelumnya pada bab 2. Prinsip utama algoritma RLE adalah mengkodekan karakter dengan string yang dibentuk dari jumlah deretan karakter yang berulang secara bersamaan, dimana proses encoding dilakukan apabila jumlah perulangan lebih besar dari 3 kali. Input dari algoritma ini adalah deretan karakter lalu membaca satu karakter dalam satu waktu tanpa harus melibatkan pengonversian ke bentuk codeword, RLE hanya membutuhkan counter sebagai pengingat jumlah kemunculan karakter yang sama untuk setiap iterasi, apabila counter suatu karakter sudah di atas tiga kali, maka karakter tersebut akan ditulis beserta marker byte dan jumlah counter sebagai token hasil encoding. Untuk proses decoding, algoritma hanya melihat marker byte, lalu menulis karakter tersebut sebanyak jumlah counter.
+
+Karena algoritma RLE kurang efektif diimplementasikan pada file teks, maka algoritma ini akan dibantu oleh algoritma BWT. Algoritma BWT adalah suatu algoritma yang mentransformasikan sederetan teks ke bentuk teks yang lebih banyak mengandung karakter-karakter yang sama secara berturut-turut tanpa menghilangkan sedikitpun informasi dari teks semula, sehingga dengan mentransformasikan teks terlebih dahulu, maka peluang algoritma RLE untuk mencapi kompresi yang lebih baik akan meningkat. Untuk merancang dan menghitung kompleksitas algoritma RLE dan BWT, maka algoritma BWT akan dirancang sebagai suatu fungsi terpisah yang  akan dijadikan sebagai bagian dari fungsi RLE untuk proses encoding maupun decoding. 
+
+
+3.2.3.1	Fungsi Algoritma RLE
+
+Fungsi algoritma RLE  terdiri dari beberapa bagian yaitu sebagai berikut.
+1.	Fungsi WriteString
+2.	Fungsi rotasi string
+3.	Fungsi pembanding string
+4.	Fungsi penggabungan dua buah array
+5.	Fungsi pemotongan elemen array
+6.	Fungsi pengurutan string
+7.	Fungsi pencarian elemen array 
+8.	Fungsi transformasi teks dengan algoritma BWT
+9.	Fungsi pengembalian teks hasil transformasi algoritma BWT (reversing)
+
+Fungsi di atas akan digunakan untuk proses encoding maupun decoding algoritma RLE.
+
+
+3.2.3.1.1	Fungsi WriteString
+
+Fungsi WriteString adalah fungsi yang berguna untuk menulis karakter secara berturut-turut sebanyak jumlah yang dilewatkan pada fungsi ini. Fungsi ini memililki dua parameter yaitu Chr karakter yang akan ditulis, dan Long jumlah karakter yang akan ditulis. Contoh, WriteString(‘C’, 3) akan menghasilkan string “CCC”.
+
+Tabel 3.22 Pseudo Code Fungsi WriteString
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11	function WriteString(char Chr; integer Long)
+var
+  integer I;
+  string Output;
+begin
+  Output ? '';
+  for I ? 1 to Long do begin
+    Output ? Output + Chr;
+  end;
+  WriteString ? Output;
+end;	
+
+
+
+
+1
+(1+1)*n=2n
+(1+1)*n=2n
+
+1
+
+	Total Waktu Eksekusi	4n+2
+
+Kompleksitas fungsi tersebut adalah 4n+2 dengan Big-O = O(n), dimana n adalah jumlah penulisan karakter.
+
+
+3.2.3.1.2	Fungsi Rotasi String
+
+Fungsi ini bertujuan untuk memindahkan karakter demi karakter ke sisi kanan sebuah string sebanyak argument I yang dilewatkan pada fungsi ini. Sehingga, string tersebut seolah-olah tampak berotasi dari kiri ke kanan. Fungsi ini memiliki dua paramenter Str yaitu string yang akan dirotasikan, dan I jumlah rotasi. Contoh, Rotate('PHILIPS_TEL', 3) maka hasilnya adalah string “LIPS_TELPHI”. 
+
+      Tabel 3.23 Pseudo Code Fungsi Rotasi String
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10	function Rotate(string Str; integer I)
+var
+  string RotatedStrings;
+  integer N;
+begin
+  N ? Length(Buffer);
+  RotatedStrings ? Copy(Str, I + 1, N - (I *  
+  ¬1)) + Copy(Str, 1, (I * 1) );
+  Rotate ? RotatedStrings;
+end;	
+
+
+
+
+(1+1)=2
+
+(1+4+1+2)=8
+(1+1)=2
+
+	Total Waktu Eksekusi	12
+
+Kompleksitas dari fungsi rotasi ini adalah 2+8+2=12 (constant time) dengan waktu eksekusi O(1).
+3.2.3.1.3	Fungsi Pembanding String
+
+Fungsi ini berguna untuk membandingkan dua buah string dari suatu string yang diakses dari dua buah posisi index yang berbeda. Pembandingan dilakukan dengan membandingkan karakter demi karakter sampai karakter tersebut berbeda, fungsi ini akan bernilai true jika karakter pada posisi X lebih kecil dari karakter pada posisi Y dan sebaliknya, dalam arti string yang dimulai pada posisi X lebih kecil daripada string yang dimulai pada posisi Y. Fungsi ini nantinya akan digunakan oleh fungi BWT untuk mengurutkan sejumlah string secara lexicographic.
+
+           Tabel 3.24 Pseudo Code Fungsi Rotasi String
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13	function Compare(integer X, Y)
+begin
+  while Buffer[X] = Buffer[Y] do begin
+      X ? X + 1;
+      Y ? Y + 1;
+  end;
+
+  if Buffer[X] < Buffer[Y] then begin
+      Compare ? True;
+  end else begin
+      Compare ? False;
+  end;
+end;	
+
+(1+1+1)n=3n
+(1+1)n=2n
+(1+1)n=2n
+
+
+(1+1+1)=3
+1
+
+1
+	Total Waktu Eksekusi	7n+4
+
+Kompleksitas dari fungsi ini adalah 7n+4, dengan Big-O = O(n), dimana n adalah jumlah perulangan sampai string pada posisi X dan Y berbeda. Namun, karena pembandingan dilakukan dengan menelusuri karakter demi karakter dari suatu string, maka perulangan yang dilakukan dapat dipastikan sepanjang string itu juga, sehingga n dapat juga dianggap sebagai besarnya buffer. 
+
+
+3.2.3.1.4	Fungsi Penggabungan Dua Buah Array
+
+Fungsi ini bertujuan untuk menggabungkan dua buah array yang terurut menjadi sebuah array yang terurut secara ascending, dimana elemen-elemenya diambil dari ke dua array tersebut. Fungsi ini memiliki empat parameter. Tiga parameter pertama merupakan parameter bertipe array yaitu List1, List2, dan List3. List1 dan List2 merupakan array yang akan digabungkan, sedangkan List3 merupakan array hasil gabungan antara array List1 dan List2. Parameter ke empat bertipe boolean, yaitu sebagai indikator untuk proses pengurutan, dimana true untuk pengurutan transformasi, dan false untuk pengurutan reversing. 
+
+Tabel 3.25 Pseudo Code Fungsi Penggabungan Dua Buah Array
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46	function ConcatArray(array List1, List2, ¬List3; boolean transform)
+var
+  integer List1Index, List2Index, List3Index;
+begin
+  List1Index?0; List2Index?0; List3Index?0;
+  while (List1Index < Length(List1)) AND   
+  ¬(List2Index < Length(List2)) do begin
+    if Transform then begin
+      if Compare(List1[List1Index],  
+        ¬List2[List2Index]) then begin
+        List3[List3Index] ? List1[List1Index];
+        List1Index ? List1Index + 1;
+      end else begin
+        List3[List3Index] ? List2[List2Index];
+        List2Index ? List2Index + 1;
+      end;
+    end else begin
+      if Buffer[List1[List1Index]] < 
+      ¬Buffer[List2[List2Index]] then begin
+        List3[List3Index] ? List1[List1Index];
+        List1Index ? List1Index + 1;
+      end else begin
+        List3[List3Index] ? List2[List2Index];
+        List2Index ? List2Index + 1;
+      end;
+    end;
+    List3Index ? List3Index + 1;
+  end;  { end while }      
+       
+  if List1Index >= Length(List1) then begin
+    for I ? List2Index to Length(List2) - 1 do 
+    ¬begin
+      List3[List3Index] ? List2[I];
+      List3Index ? List3Index + 1;
+    end;
+  end;
+  if List2Index >= Length(List2) then begin
+    for I ? List1Index to Length(List1) - 1 do 
+    ¬begin
+      List3[List3Index] ? List1[I];
+      List3Index ? List3Index + 1;
+    end;
+  end;
+  Merge ? List3;
+end;	
+
+
+
+
+1+1+1=3
+
+5n
+
+
+(7n+4)n=7n2+4
+(1+1+1)n=3n
+(1+1)n=2n
+
+(1+1+1)n=3n
+(1+1)n=2n
+
+
+(1+1+1+1+1)n=
+5n
+(1+1+1)n=3n
+(1+1)n=2n
+
+(1+1+1)n=3n
+(1+1)n=2n
+
+
+(1+1)n=2n
+
+
+(1+1)=2
+
+(3)(n-1)=3n-3
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+
+
+(1+1)=2
+
+(3)(n-1)=3n-3
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+
+
+1
+		
+Karena intruksi pengurutan transformasi dan reversing berbeda, maka penghitungan kompleksitas fungsi ini dibagi menjadi dua bagian yaitu kompleksitas untuk pengurutan transformasi dan kompleksitas untuk pengurutan reversing.  Untuk kompleksitas pengurutan transformasi, waktu yang diambil adalah intruksi dari baris 10-17 dijumlah dengan intruksi selain baris 19-26. Jadi, kompleksitasnya adalah 7n2+28n-4 dengan notasi Big-O = O(n2)  dimana n adalah panjang array List3. Waktu eksekusi fungsi ini menjadi quadratic time karena disebabkan oleh fungsi Compare() pada baris 10 yang membandingkan string, dengan cara menelusuri isi buffer sepanjang array List3. Sedangkan kompleksitas untuk pengurutan reversing waktu yang dihitung adalah intruksi dari baris 19-26 dijumlah dengan intruksi selain intruksi pengurutan transformasi, jadi kompleksitasnya adalah 38n-8 dengan Big-O=O(n). Waktu eksekusinya lebih cepat karena pengurutan ini hanya membandingkan karakter, tanpa adanya penelusuran isi buffer.
+
+
+3.2.3.1.5	Fungsi Pemotongan Elemen Array
+
+Fungsi ini bertujuan untuk memotong atau mengambil sebagian atau keseluruhan elemen array dari posisi tertentu. Misalnya, suatu array yang elemennya (0, 2, 4, 6, 2, 9, 4, 5), dipanggil dengan fungsi SliceArray(Arr, 2, 6) akan menghasilkan array yang elemennya (4, 6, 2, dan 9). 
+
+Tabel 3.26 Pseudo Code Fungsi Pemotongan Elemen Array
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14	function SliceArray(array Arr; integer From, ¬Max)
+var
+  integer Half, I;  
+  array NewArr;
+begin
+  Half ? Max - From;  
+  SetLength(NewArr, Half);
+  for I ? 0 to Half - 1 do begin    
+     NewArr[I] ? Arr[From];    
+     From ? From + 1;
+  end;                 
+  SliceArray ? NewArr;
+end;	
+
+
+
+
+
+(1+1)=2
+1
+(3)(n-1)=3n-3
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+
+1
+
+	Total Waktu Eksekusi	8n-4
+
+Kompleksitas fungsi pemotongan array ini adalah 8n-4 dengan notasi Big-O = O(n), karena worst-case dari fungsi ini adalah mengambil semua elemen array, maka n dapat diasumsikan sebagai banyaknya elemen array.
+
+
+3.2.3.1.6	Fungsi Pengurutan String
+
+Fungsi ini merupakan fungsi yang berguna untuk mengurutkan elemen suatu array, dimana pengurutan dilakukan dengan cara membagi elemen-elemen array secara rekursif sampai tidak ada lagi elemen yang tersisa. Kemudian, elemen-elemen tersebut kembali disatukan sehingga diperoleh array yang terurut. Fungsi ini memiliki dua parameter yaitu Unsorted merupakan array yang akan diurutkan, dan Transform bertipe boolean, sebagai indikator yang akan dilewatkan pada fungsi ConcatArray() nantinya. Nilai kembalian dari fungsi ini adalah array yang telah terurut secara ascending.
+
+          Tabel 3.27 Pseudo Code Fungsi Pengurutan String
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18	function SortString(array Unsorted; boolean ¬Transform)
+var
+  integer Cent;
+  array First, Second;
+begin
+  if Length(Unsorted) > 1 then begin
+    Cent   ? Length(Unsorted) div 2;
+    First  ? MergeSort(SliceArray(Unsorted, 0, 
+    ¬Cent), Transform);
+    Second ? MergeSort(SliceArray(Unsorted, 
+    ¬Cent, Length(Unsorted)), Transform);
+    Result ? Merge(First, Second, Unsorted, 
+    ¬Transform);
+  end else begin
+    MergeSort ? Unsorted;
+  end;
+end;	
+
+
+
+
+
+(1+1)=2
+(1+1+1)=3
+2log n/2+(8n-4)/2
+2log n/2+(8n-4)/2
+7n2+28n-4 or 38n-8
+
+1
+		
+
+Karena fungsi ini merupakan inti dari pengurutan array yang melibatkan pemanggilan fungsi ConcatArray(), maka kompleksitasnya juga terdiri dua bagian yaitu kompleksitas untuk pengurutan transformasi dan untuk pengurutan reversing. Pada baris 8-11 fungsi ini melakukan pemotongan array menjadi dua bagian secara rekursif, sehingga waktu eksekusinya adalah:
+
+2log n/2 + (8n-4)/2 + 2log n/2 + (8n-4)/2 	= 2log n/2 + 2log n/2 + 4n-2 + 4n-2
+	= 2log n - 2log 2 + 2log n - 2log 2 + 8n-4
+	=  2 2log n - 2 + 8n - 4
+	= 16n 2log n - 6
+
+dimana 8n-4 merupakan kompleksitas dari fungsi SliceArray() untuk memotong array yang terdiri dari n elemen. Setelah proses pembagian elemen array selesai, maka elemen-elemen tersebut kembali digabungkan (concat) sebanyak elemen array pembandingan. Jadi, kompleksitas untuk pengurutan transformasi adalah 16n*2log n-6+7n2+28n-4 = 7n2+16n*2log n +28n-10, dengan notasi Big-O adalah O(n2). Sedangkan kompleksitas pengurutan reversing adalah 16n*2log n-6+38n-8 = 16n*2log n+38n-14 dengan notasi Big-O adalah O(n 2log n), dimana n adalah banyaknya elemen array yang akan diurutkan.
+
+
+3.2.3.1.7	Fungsi Pencarian Elemen Array
+
+Fungsi ini bertujuan untuk mengambil index karakter yang dilewatkan pada parameter fungsi ini dari suatu buffer. Nantinya fungsi ini digunakan untuk pembentukan vektor selama proses reversing oleh algoritma BWT.
+
+   Tabel 3.28 Pseudo Code Fungsi Pencarian Elemen Array
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13	function ArraySearch(char FChr)
+var
+  integer I, Found;
+begin
+  for I ? 1 to IntFileSize do begin
+    if FChr = Buffer2[I] then begin
+      Found ? I - 1;
+      Buffer2[I] ? Chr($00);
+      Break;
+    end;
+  end;
+  ArraySearch ? Found;
+end;	
+
+
+
+(1+1)n=2n
+(1+1)n=2n
+(1+1)n=2n
+(1+1+1)n=3n
+1n=n
+
+
+1
+		10n+1
+Karena fungsi ini melakukan penelusuran buffer untuk menemukan karakter tertentu, maka kompleksitasnya linear yaitu 10n+1 dengan Big-O adalah O(n).
+
+
+3.2.3.1.8	Fungsi Transformasi Teks dengan Algoritma BWT
+
+Fungsi ini merupakan implementasi algoritma BWT untuk mentransformasikan string kebentuk yang lebih banyak mengandung karakter yang sama secara berdekatan. Transformasi dilakukan dengan cara terlebih dahulu mengubah buffer menjadi suatu array yang elemennya adalah karakter-karakter buffer itu sendiri. Kemudian dilakukan pengurutan string secara lexicograhpic dengan menggunakan fungsi SortString() mulai dari posisi index ke 0 sampai n, dimana n adalah ukuran buffer. Setelah array (string) terurut, maka string tersebut dirotasikan sekaligus dengan pengambilan karakter terakhirnya. Kumpulan karakter ini merupakan hasil dari transformasi algoritma BWT.
+
+Tabel 3.29 Pseudo Code Fungsi Transformasi BWT
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20	function BWTTransform()
+var
+  integer I, N;
+  array Ranged, Buffer;
+  string Last;
+begin
+  N ? Length(Buffer);
+  SetLength(Ranged, N);
+  for I ? 0 to N - 1 do begin
+     Ranged[I] ? I;
+  end;
+
+  SortString(Ranged, TRUE);  
+
+  for I ? 0 to N - 1  do begin
+    Last ? Last + Copy(Rotate(Buffer, 
+    ¬Ranged[I]), N, 1);
+  end;
+  BWTTransform ? Last;
+end;	
+
+
+
+
+
+1+1=2
+1
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+
+
+7n2+16n*2log n +28n-10 
+(3)(n-1)=3n-3
+(16)(n-1)=
+16n-16
+
+1
+
+		
+
+Kompleksitas transformasi ini dihitung dari waktu pembentukan array buffer, pengurutan string, dan  pengambilan karakter terakhir dari string yang telah terurut. Jadi, kompleksitasnya adalah 7n2+16n*2log n+52n-28 dengan Big-O = O(n2). 
+3.2.3.1.9	Fungsi Pengembalian Teks Hasil Transformasi  Algoritma BWT (Reversing)
+
+Fungsi ini berguna untuk melakukan pembalikan (reversing) terhadap teks yang telah ditransformasikan dengan algoritma BWT. Proses reversing dilakukan dengan cara pembentukan tiga buah array yang berguna untuk menampung teks masukan (FirstColumn), hasil pengurutan teks masukan (LastColumn), dan index yang memetakan (vector) setiap elemen FirstColumn ke elemen LastColumn. Kemudian, dilakukan proses reversing dengan mengambil karakter-karakter pada LastColumn yang index nya berkorespodensi dengan elemen vector yang sedang aktif. Kumpulan karakter ini nantinya merupakan hasil dari reversing.
+
+Tabel 3.30 Pseudo Code Fungsi Reversing BWT
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+12
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33	function BWTReversing()
+var
+  array FirstColumn, LastColumn, Vector,
+  ¬Buffer, Buffer2;
+  integer I, Index, IntFileSize;
+  string Last;
+begin
+  IntFileSize ? Length(Buffer);
+  SetLength(FirstColumn, IntFileSize);
+  SetLength(LastColumn, IntFileSize);
+  SetLength(Vector, IntFileSize);
+
+  Buffer2 ? Buffer;
+  
+  for I ? 0 to IntFileSize - 1 do begin
+    LastColumn[I] ? I  
+  end;
+  
+  FirstColumn?SortString(LastColumn, FALSE);
+
+  for I ? 0 to IntFileSize - 1 do begin
+    Vector[I] ? ArraySearch(Buffer[
+    ¬FirstColumn[I]]);
+  end;
+
+  Index ? FirstColumn[I - 1];
+
+  for I ? 0 to IntFileSize - 1 do begin
+    Index ? Vector[Index];
+    Last ? Last + Buffer[Index];  
+  end;
+  BWTReversing ? Last;
+end;	
+
+
+
+
+
+
+1+1=2
+1
+1
+1
+
+1
+
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+
+
+16n*2log n+38n-13
+(3)(n-1)=3n-3
+(10n+5)(n-1)=10n2-5n-5
+
+
+1+1+1=3
+
+(3)(n-1)=3n-3
+(2)(n-1)=2n-2
+(3)(n-1)=3n-3
+
+1
+		
+Kompleksitas fungsi reversing ini dihitung dari waktu pembentukan array), pengurutan karakter, dan pengambilan karakter pada  LastColumn. Jadi, kompleksitasnya adalah 10n2+16n*2log n+49n-24, dengan notasi Big-O adalah O(n2), dimana n adalah banyak karakter dalam buffer.
+
+
+3.2.3.2	Algoritma RLE+BWT Encoding
+
+Algoritma RLE+BWT encoding dirancang dalam bentuk flowchart berikut.
+
+ 
+Gambar 3.7 Flowchart RLE+BWT Encoding 
+Tabel 3.31 Algoritma RLE+BWT Encoding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35	const
+  RLE_MARKER_BYTE = ‘#’;
+var
+  integer I, Counter;
+  string Source, Output, Header;
+begin
+  Source ? BWTTransform(); 
+
+  Counter ? 1;
+  I ? 1;  
+  while I <= Length(Source) do begin
+    while (Source[I] <> RLE_MARKER_BYTE ) and 
+    ¬not (Source[I] in ['0'..'9']) and 
+    ¬(Source[I] = Source[I + 1]) do begin
+      Counter ? Counter + 1;
+      I ? I + 1;
+    end;
+    if Counter > 3 then begin
+      Output ? Output + RLE_MARKER_BYTE + 
+      ¬IntToStr(Counter) + Source[i];
+    end else if Source[I] = RLE_MARKER_BYTE   
+    ¬then begin
+      Output ? Output + 
+      ¬WriteString(RLE_MARKER_BYTE, 2);
+    end else begin
+      Output ? Output + WriteString(Source[I], 
+      ¬Counter);
+    end;
+    Counter ? 1;
+    I ? I + 1;
+  end; { end while }
+  Header ? 'rlebwt|' + END_OF_HEADER;
+  EncodedStream ? Header + Output;
+end; { end of algorithm }	
+1
+
+
+
+
+7n2+16n*2log n+52n-28
+1
+1
+(1+1)n=2n
+
+
+(9)n2=9n2
+(1+1)n2=2n2
+(1+1)n2=2n2
+
+1n=n
+
+(6)n=6n
+
+(2)n=2n
+
+(12)n=12n
+
+
+(4n+4)n=4n2+4n
+
+1n=n
+(1+1)n=2n
+
+(1+1)=2
+(1+1)=2
+
+		
+
+Kompleksitas algoritma RLE dihitung dari total kompleksitas transformasi BWT dan kompleksitas algoritma RLE itu sendiri, yaitu dari baris 7-35. Pada baris 7, mula-mula teks masukan ditransformasi dengan algoritma BWT, kompleksitasnya 7n2+16n*2log n+52n-28. Sedangkan kompleksitas algoritma RLE dihitung dari baris 9-35. Namun, pada baris 19-29 waktu yang diambil adalah waktu terbesar dari tiga kondisi yang mungkin (dalam hal ini waktu pada baris 27), dimana baris ini merupakan baris untuk melakukan penulisan karakter sebanyak jumlah counter dengan worst-case jumlah counter sama dengan ukuran buffer. Jadi, kompleksitas algoritma RLE+BWT adalah 7n2+16n*2log n+52n-28+17n2+10n+7 = 24n2+16n*2log n+62n-21, dengan notasi Big-O adalah O(n2), dimana n adalah ukuran buffer.
+ 
+3.2.3.3	Algoritma RLE+BWT Decoding
+
+Untuk proses decoding algoritma RLE, pertama-tama teks masukan akan di-decoding oleh algoritma RLE, kemudian di-reversing oleh algoritma BWT. Flowchart algoritma RLE decoding ditunjukkan pada gambar 3.8 berikut.
+
+ 
+Gambar 3.8 Flowchart RLE+BWT Decoding
+Tabel 3.32 Algoritma RLE+BWT Decoding
+	Pseudo code	Waktu Eksekusi
+1
+2
+3
+4
+5
+6
+7
+8
+9
+10
+11
+13
+14
+15
+16
+17
+18
+19
+20
+21
+22
+23
+24
+25
+26
+27
+28
+29
+30
+31
+32
+33
+34
+35
+36
+37
+38
+39
+40
+41
+42
+43
+44
+45
+46
+47
+48
+49
+50
+51
+52
+53
+54
+55
+56
+57	const
+  RLE_MARKER_BYTE = ‘#’;
+var
+  array Buffer, Source; 
+  integer HeaderIndexPosition, I;
+  string Output, Source, Counter, Header, Exp;
+
+begin
+  IntFileSize ? Length(Buffer);
+  HeaderIndexPosition ? 0;
+  for I ? 0 to IntFileSize do begin
+    if Buffer[I] = ‘$’ then begin
+      HeaderIndexPosition ? I;
+      Break;
+    end;
+  end;
+
+  for I ? 0 to HeaderIndexPosition do begin
+    Header ? Header + Buffer[I];
+  end;
+  
+  Exp ? Explode('|', Header);
+
+  if Exp[0] = 'rlebwt' then begin
+    Source ? Buffer;
+    I ? HeaderIndexPosition + 2;
+    while I <= IntFileSize do begin
+      if (Source[I] = RLE_MARKER_BYTE) and 
+      ¬(Source[I + 1] = RLE_MARKER_BYTE) then  
+      ¬begin
+        Output ? Output + RLE_MARKER_BYTE;
+        I ? I + 1;
+      end else if Source[I] = RLE_MARKER_BYTE 
+      ¬then begin
+        while (Source[I + 1] in ['0'..'9']) do 
+        ¬begin
+          Counter ? Counter + Source[I + 1];  
+          I ? I + 1;
+        end;
+        I ? I + 1;
+        Output ? Output + 
+        ¬WriteString(Source[I], 
+        ¬StrToInt(Counter)); 
+        Counter ? '';
+      end else begin
+        Output ? Output + Source[I]; 
+      end;
+      I ? I + 1;
+    end; { end while }
+    for I ? 0 to Length(Output) - 1 do begin
+      Buffer[I] ? Output[I + 1];
+    end;
+    IntFileSize ? Length(Output);
+    DecodedStream ? BWTReversing();
+
+end; { end decoding }	
+
+
+
+
+
+
+
+(1+1)=2
+1
+(1+1)n=2n
+(1+1)n=2n
+1n=n
+1n=n
+
+
+
+(1+1)n=2n
+(1+1+1)n=3n
+
+
+1+(12n+5)
+
+(1+1)=2
+1
+(1+1)=2
+1n=n
+
+
+(6)n=6n
+(1+1)n=2n
+(1+1)n=2n
+
+(1+1)n=2n
+
+(3)n2=3n2
+(4)n2=4n2
+(2)n2=2n2
+
+(1+1)n=2n
+
+(4n+10)n=
+4n2+10n
+1n=n
+
+(1+1+1)n=3n
+
+(1+1)n=2n
+
+(4)(n-1)=4n-4
+(4)(n-1)=4n-4
+
+(1+1)=2
+10n2+16n*2log n+49n-24
+		
+Untuk menentukan kompleksitas algoritma RLE, maka penghitungan kompleksitas dibagi menjadi tiga bagian yaitu kompleksitas pembacaan header, kompleksitas proses decoding algoritma RLE, dan kompleksitas proses reversing oleh algoritma BWT. Jumlah ketiga kompleksitas tersebut merupakan kompleksitas algoritma RLE secara kesuluruhan.
+	
+	Kompleksitas pembacaan header dihitung dari baris 9-23. Untuk baris 9-17, mula-mula decoder menerima masukan berupa teks (buffer), kemudian dicari posisi index EOF header (tanda ‘$’) dengan membaca karakter demi karakter pada buffer sampai tanda tersebut ditemukan. Index EOF header nantinya berguna sebagai indikator (pembatas) antara header dengan karakter-karakter asli dari file, sehingga decoder dapat mengetahui dari posisi mana decoding akan dilakukan. Namun, karena header hanyalah string yang terdiri dari 8 karakter, yaitu string “rlebwt|$”, maka perulangan maksimum untuk mencari posisi index tersebut maksimal 8 kali, sehingga kompleksitas pada baris ini dapat dianggap konstan yaitu 6n+3 = 6(8) + 3 = 51 dengan Big-O = O(1). Sedangkan, pada baris 19-21 kompleksitasnya adalah 5n, namun karena posisi EOF header selalu berada pada index ke-8, maka worst-case baris ini juga konstan yaitu 5(8) = 40. Jadi, kompleksitas pembacaan header (baris 9-23) adalah 51+40=91, dengan waktu eksekusi konstan atau O(1).
+
+	Proses decoding algoritma RLE dimulai dari baris 25-50. Jadi, penghitungan kompleksitasnya dihitung dari baris tersebut, dimana pada baris 29-48 terdapat tiga kondisi waktu yang mungkin untuk dieksekusi. Namun, waktu yang diambil adalah waktu yang terbesar, yaitu pada baris 36-45 yang melakukan perulangan sebanyak n untuk membaca angka yang menyatakan perulangan karakter pada saat encoding, dimana n adalah jumlah digit angka tersebut. Namun, kenyataannya jumlah digit ini umumnya sangat kecil, sehingga waktu eksekusinya dapat dianggap konstan untuk setiap iterasi proses decoding. Jadi, kompleksitas algoritma RLE decoding yaitu 13n2+24n+5.
+	
+	Baris 51-55 merupakan proses reversing teks hasil decoding RLE dengan algoritma BWT. Karena pada saat encoding teks masukan terlebih dahulu ditransformasi, maka pada saat decoding proses reversing merupakan langkah terakhir untuk memperoleh teks asli. Proses reversing dilakukan dengan cara terlebih dahulu menampung teks hasil decoding RLE pada sebuah buffer, lalu dilakukan proses reversing dengan pemanggilan fungsi BWTReversing(). Teks hasil proses ini merupakan hasil akhir proses decoding. Kompleksitas untuk proses reversing adalah 10n2+16n*2log n+49n-24+8n-8+2 = 10n2+16n*2log n+57n-30.
+
+	Jadi, kompleksitas algoritma RLE+BWT decoding secara keseluruhan adalah 91+13n2+24n+5+10n2+16n*2log n+57n-30 = 23n2+16n*2log n+81n-66 dengan notasi Big-O adalah O(n2), dimana n adalah ukuran buffer.
+
+
+3.3	Perancangan Sistem
+
+Setelah perancangan algoritma selesai, maka hasil rancangan tersebut kembali dikembangkan menjadi sebuah sistem yang mengimplementasikan algoritma tersebut untuk proses kompresi maupun dekompresi. Namun, sebelum sistem dibangun maka sistem tersebut harus terlebih dahulu dirancang untuk mengetahui bagaimana alur kerja sistem tersebut, interface atau spesifikasi apa saja yang dibutuhkan agar sistem tersebut dapat terwujud sesuai dengan yang diharapkan. Perancangan ini meliputi perancangan sistem dalam bentuk DFD (Data Flow Diagram), dan perancangan interface sistem.
+
+
+3.3.1 Pemodelan Fungsional dan DFD
+
+Pemodelan fungsional bertujuan untuk mendekripsikan seluruh fungsi yang terlibat dalam sebuah sistem. Agar fungsi dalam suatu sistem bekerja dengan maksimal, maka fungsi tersebut perlu dianalisis. Fungsi ini biasanya berkaitan dalam hal terminologi proses atau transformasi data dari satu proses ke proses lainnya. Jadi, untuk memodelkan proses tersebut maka sering digunakan DFD, yaitu suatu tool yang menggambarkan aliran data dari satu proses ke proses lainnya dalam suatu sistem, bahkan ke sistem lainnya. Secara umum, fungsi yang terlibat pada sistem ini hanya terdiri dari dua bagian saja yaitu fungsi untuk kompresi dan dekompresi yang selanjutnya dimodelkan menjadi DFD proses kompresi dan dekompresi.
+3.3.1.1 DFD Proses Kompresi dan Dekompresi
+
+Secara umum, sistem untuk proses kompresi dan dekompresi yang akan dibangun dapat digambarkan dalam bentuk DFD level 0 (diagram context) berikut ini.
+
+ 
+Gambar 3.9 DFD Level 0 Proses Kompresi dan Dekompresi
+
+DFD level 0 di atas hanya menggambarkan proses kompresi dan dekompresi yang terjadi pada sistem secara umum, yang meliputi: masukan berupa file yang akan dikompresi/didekompresi, jenis algoritma yang akan digunakan dan keluaran berupa file hasil kompresi/dekompresi, dan informasi hasil kompresi/dekompresi. Proses yang terjadi pada DFD di atas dapat dilihat pada tabel 3.33 spesifikasi proses berikut ini.
+
+Tabel 3.33 Spesifikasi Proses DFD Level 0 Proses Kompresi dan Dekompresi
+No / Nama Proses	Input	Keterangan Proses	Output
+P.0 / Proses Kompresi dan Dekompresi	File Asli, Jenis Algoritma	Pada proses ini, file masukan berupa file asli atau file terkompresi dari user akan diproses dengan jenis algoritma yang dipilih. Kemudian diberikan hasil berupa file terkompresi atau file asli beserta informasi berupa statistik hasil kompresi dan dekompresi.	File Terkompresi, Informasi Hasil Kompresi
+	
+DFD Level 0 (proses 0) pada gambar 3.9 dapat dibagi lagi menjadi dua proses yang lebih spesifik seperti pada gambar 3.10 berikut ini.
+
+ 
+
+Gambar 3.10 DFD Level 1 Proses 0 Untuk Kompresi dan Dekompresi
+
+Pada DFD Level 1 Proses 0 di atas terdapat 3 buah proses berupa pemilihan jenis algoritma, proses kompresi, dan proses dekompresi. Ketiga proses ini merupakan proses yang sangat penting, karena merupakan proses inti dari sistem pengompresian yang akan dibangun. Adapun proses yang terjadi pada DFD ini diuraikan pada tabel spesifikasi proses berikut ini.
+
+Tabel 3.34 Spesifikasi Proses DFD Level 1 Proses 0 Kompresi dan Dekompresi
+No / Nama Proses	Input	Keterangan Proses	Output
+P.1 / Proses Pemeriksaan Algoritma	Pilihan Algoritma	Pemeriksaan algoritma dimaksudkan untuk mengenali algoritma apa sedang digunakan oleh user untuk proses kompresi/dekompresi. 	Order Kompresi, Order Dekompresi
+(sambungan tabel 3.34)
+No / Nama Proses	Input	Keterangan Proses	Output
+		sehingga dapat diketahui fitur tambahan yang mungkin akan disertakan pada file hasil kompresi/dekompresi.	
+P.2 / Proses Kompresi	File Asli, Order Kompresi	Untuk mengompresi file yang di-input oleh user berdasarkan algoritma yang dipilih.	File Terkompresi, Informasi Hasil Kompresi.
+P.3 / Proses Dekompresi	File Terkompresi, Order Dekompresi	Kebalikan dari proses kompresi, yaitu untuk medekompresi file terkompresi menjadi file semula (file asli) dengan algoritma yang pilih oleh user.	File Asli, Informasi Hasil Dekompresi.
+
+Selanjutnya, proses 2 DFD Level 1 untuk proses kompresi pada gambar 3.10 dapat lagi dijabarkan ke dalam beberapa proses yang lebih sepesifik. 
+
+ 
+Gambar 3.11 DFD Level 2 Proses Kompresi
+DFD Level 2 pada gambar 3.11 di atas mendekripsikan proses kompresi yang sebenarnya terjadi pada saat implementasi sistem oleh user mulai dari pemilihan file, proses kompresi sampai dengan penyimpanan file hasil kompresi. Adapun proses yang terdapat pada DFD tersebut dijelaskan pada tabel spesifikasi berikut ini.
+
+Tabel 3.35 Spesifikasi Proses DFD Level 2 Proses Kompresi
+No / Nama Proses	Input	Keterangan Proses	Output
+P 2.1 / Browse File Asli	File Asli, File Yang Ingin Dikompresi	Proses ini mengijinkan user untuk mencari file yang tersimpan pada device komputer untuk dikompresi .	Salinan File
+P 2.2 / Proses Pilih Algoritma	Pilihan Algoritma	Untuk memilih algoritma mana yang akan digunakan untuk proses kompresi.	Order Kompresi
+P 2.3 / Tampung File ke Dalam Buffer	Salinan File	Proses ini merupakan proses untuk membuat salinan file asli ke dalam buffer.	Input Stream
+P 2.4 / Baca File Dari Buffer	Input Stream	Membaca karakter-karakter dari buffer sebagai input stream agar dapat dikompresi	Karakter Yang Sedang Dibaca
+P 2.5 / Proses Kompresi	Order Kompresi, Karakter Yang Sedang Dibaca	Untuk mengkodekan karakter-karakter dari buffer, agar ukurannya lebih kecil dari file semula.	Karakter-Karakter Yang Terkodekan
+P 2.6 / Buat File Hasil Kompresi	Karakter-Karakter Yang Terkodekan	Mengumpulkan karakter-karakter terkodekan untuk jadikan menjadi suatu file terkompresi agar dapat disimpan kembali ke device komputer	File Output,  Informasi File Output
+P 2.7 / Proses Informasi Hasil Kompresi	Informasi File Output	Untuk menampilkan informasi hasil kompresi berupa algoritma yang digunakan,  rasio kompresi, waktu kompresi, dan lain-lain.	Informasi Hasil Kompresi
+Sama hal nya seperti DFD Level 2 proses kompresi,  proses 3 DFD Level 1 untuk proses dekompresi pada gambar 3.10 dapat juga dijabarkan ke dalam beberapa proses yang lebih sepesifik seperti pada gambar 3.12 berikut ini.
+
+ 
+Gambar 3.12 DFD Level 2 Proses Dekompresi
+
+
+DFD Level 2 proses dekompresi pada gambar 3.12 di atas juga mendekripsikan proses dekompresi yang sebenarnya terjadi pada saat implementasi sistem yaitu berupa pemilihan file terkompresi sampai penyimpanan file hasil dekompresi ke device komputer. Rincian proses yang terjadi pada DFD tersebut diuraikan pada tabel spesifikasi berikut ini.
+
+Tabel 3.36 Spesifikasi Proses DFD Level 2 Proses Dekompresi
+No / Nama Proses	Input	Keterangan Proses	Output
+P 3.1 / Browse File Terkompresi	Pilihan File Terkompresi, File Terkompresi	Proses ini mengijinkan user untuk mencari file terkompresi yang ada pada device komputer untuk didekompresi .	Salinan File
+
+(sambungan tabel 3.36)
+No / Nama Proses	Input	Keterangan Proses	Output
+P 3.2 / Proses Pilih Algoritma	Pilih Algoritma	Untuk mengidentifikasi algoritma yang akan digunakan pada saat dekompresi.	Order Dekompresi
+P 3.3 / Tampung File ke Dalam Buffer	Salinan File	Untuk membuat salinan file terkompresi ke buffer, agar dapat dibaca untuk didekompresi.	Input  Stream
+P 3.4 / Baca File Dari Buffer	Input Stream	Membaca karakter demi karakter sebagai input stream untuk siap didekompresi.	Karakter Yang Sedang Dibaca
+P 3.5 / Proses Dekompresi	Order Dekompresi, Karakter Yang Sedang Dibaca	Mendekodekan karakter karakter yang sedang dibaca, agar kembali ke karakter asli.	Karakter Asli
+P 3.6 / Buat File Hasil Dekompresi	Karakter Asli	Untuk menyatukan karakter-karakter hasil decoding menjadi sebuah file sekaligus menyimpannya kembali ke device komputer sebagai file hasil proses dekompresi.	File Output, Informasi File Hasil Dekompresi
+P 3.7 / Proses Informasi Hasil Dekompresi	Informasi File Output	Untuk menampilkan informasi hasil dekompresi berupa algoritma yang digunakan,  waktu yang dibutuhkan selama proses dekompresi, dan sebagainya.	Informasi Hasil Dekompresi
+
+
+3.3.1.2 Kamus Data
+
+Kamus data merupakan kumpulan istilah-istilah data beserta deskripsinya yang digunakan pada DFD. Tujuan penyusunan kamus data adalah untuk memudahkan proses analisis dan desain ketika DFD tersebut dibaca atau sedang digunakan oleh penganalisis, designer, atau implementer lain. 
+
+Adapun kamus data yang digunakan pada DFD proses kompresi dan dekompresi yang telah dirancang sebelumnya adalah disusun pada tabel 3.37 berikut.
+
+Tabel 3.37 Kamus Data Proses Kompresi dan Dekompresi
+Nama	Tipe Data	Deskripsi
+File Asli	File	Merupakan file yang terdiri dari karakter-karakter ASCII yang akan dikompresi. File asli berupa file plaintext *.txt
+File Terkompresi	File	Merupakan file yang terdiri karakter-karakter ASCII yang diperoleh dari pengonversian codeword yang diperoleh pada saat kompresi. Tipe file ini tergantung pada algoritma yang digunakan.
+Informasi Hasil Kompresi/Dekompresi	Array of String	Informasi ini merupakan informasi kepada user berupa jenis algoritma yang digunakan, waktu yang dibutuhkan untuk kompresi/dekompresi, rasio kompresi, dan informasi lainya pada saat proses kompresi/dekompresi selesai.
+Jenis Algoritma	String	Merupakan algoritma yang dipilih oleh user dari tiga algoritma yang tersedia untuk proses kompresi maupun dekompresi.
+Order Kompresi/Dekompresi	String	Merupakan perintah kepada sistem untuk melakukan proses kompresi/dekompresi berdasarkan algoritma yang dipilih oleh user.
+Salinan File	File	Salinan file merupakan duplikat dari file asli ketika memilih file pada saat kompresi/dekompresi agar file tersebut dapat diproses.
+Input Stream	Array of Char	Input stream merupakan karakter-karakter dari file asli/terkompresi yang telah disimpan dalam buffer, dimana karakter tersebut diidentifikasi dengan index. Tujuannya agar buffer dapat dibaca per karakter selama proses kompresi/dekompresi.
+
+3.3.2  Perancangan Interface
+
+Tahapan peracangan yang dimaksudkan di sini adalah bagaiman tampilan antar muka (interface) sistem dengan user akan dibuat. Selain cara kerja sistem (aplikasi), interface juga penting untuk diperhatikan demi kenyamanan user saat menggunakan aplikasi tersebut. Interface yang menarik tentu akan menjadi nilai tambah dan kepuasan tersendiri bagi user maupun designer, sebaliknya interface yang buruk akan membuat user tidak betah berlama-lama menggunakan aplikasi tersebut, meskipun aplikasi itu dapat berjalan dengan semestinya. 
+
+`	Jadi, pada tahap ini akan dilakukan perancangan interface-interface yang akan digunakan pada aplikasi nantinya. Interface tersebut meliputi:
+
+1.	Form Utama Aplikasi
+
+
+
+
+
+
+
+
+
+
+
+
+
+         Gambar 3.13 Rancangan Form Utama Aplikasi
+Form utama aplikasi pada gambar 3.13 di atas merupakan tampilan utama ketika aplikasi dijalankan. Form utama ini terdiri dari 5 bagian yaitu: main menu, toolbar, statistic grid, file information, dan buttons. Main menu merupakan menu yang menyediakan beberapa submenu yang bisa dipilih untuk melakukan tugas tertentu, seperti membuka atau menyimpan file. Main menu ini terdiri 3 kategori yaitu menu file, menu customize, dan menu help, dimana setiap menu memiliki submenu dengan tugas yang berbeda dengan yang lainnya. Toolbar memiliki tugas yang sama dengan menu utama, hanya saja toolbar dirancang dalam bentuk kumpulan button yang dapat langsung diakses user secara cepat. Statistic grid adalah tabel yang berguna untuk menampilkan informasi berupa rasio kompresi, waktu proses kompresi/dekompresi atau ukuran file pada saat proses kompresi/dekompresi selesai. Sedangkan, file information merupakan bagian yang berfungsi untuk menampilkan informasi file sebelum proses kompresi/dekompresi dimulai, informasi tersebut berupa nama file, tipe file, ukuran, dan sumber file. Bagian terakhir adalah buttons, yaitu terdiri dari 6 button. 3 button untuk proses kompresi dan sisanya untuk proses dekompresi. Setiap button mengeksekusi algoritma yang berbeda sesuai dengan nama yang tertera pada button tersebut.
+
+
+
+2.	Form Pengaturan Directory Penyimpanan File Hasil Kompresi dan Dekompresi
+Pengaturan ini melibatkan dua form yaitu form option dan form select target. Kedua form ini merupakan form yang berbeda namun saling ketergantungan. Dimana, form select target hanya dapat diakses melalui form option, sedangkan form option tidak akan berguna tanpa adanya form select target. Jadi, pada perancangan kedua form ini dibahas secara bersamaan. Form option akan dirancang seperti pada gambar 3.14 berikut ini.
+
+
+
+
+
+
+          Gambar 3.14 Rancangan Interface Form Option
+Pada form option terdapat dua textfield yang berfungsi untuk mengingat lokasi peyimpanan (directory) file asli dan file terkompresi, dimana kedua directory tersebut dapat diatur oleh user dengan mengklik tombol browse sehingga muncul form seperti pada gambar 3.15 berikut.
+                    
+
+ 
+
+
+
+
+
+
+
+
+
+          Gambar 3.15 Rancangan Interface Form Select Target
+
+Kedua form ini sebenarnya bertujuan untuk mengatur directory penyimpanan file hasil kompresi dan dekompresi. Sehingga, ketika user selesai mengompresi/mendekompresi suatu file, maka hasilnya akan tersimpan secara otomatis pada directory tersebut. Form ini nantinya dapat diakses lewat menu customize pada sebumenu option atau langsung dari toolbar. Selain itu, proses penyimpanan dapat juga dilakukan secara manual lewat menu file pada submenu save as atau langsung dari toolbar. Proses pengaturan directory ini merupakan proses pertama yang harus dilakukan oleh user ketika hendak mengompresi atau mendekompresi suatu file.
+
+
+3.	Form Open File
+
+Form open file adalah form yang berfungsi untuk untuk membuka file tertentu dengan cara menjelajahi directory pada komputer. Form ini merupakan satu-satunya cara untuk membuka file tertentu ketika hendak mengompresi atau mendekompresi file tersebut. Rancangan form open file ditunjukkan pada gambar 3.16 berikut ini.
+
+
+
+
+
+
+
+
+
+
+
+
+Gambar 3.16 Rancangan Interface Form Open File
+
+Form ini nantinya dapat diakses lewat menu file pada submenu open file. Karena form ini nantinya digunakan untuk proses kompresi dan dekompresi, maka form ini nantinya diatur hanya bisa menerima file dengan tipe tertentu saja, dimana pada saat kompresi form ini hanya mengijinkan user membuka file dengan tipe .txt, sedangkan pada saat dekompresi hanya mengijinkan dengan tipe algoritma yang digunakan pada saat kompresi. Hal ini dilakukan untuk memastikan user memilih tipe file yang benar, sehingga tidak terjadi kesalahan pada pada saat proses kompresi/dekompresi. Proses pembukaan file ini merupakan proses kedua setelah proses pemilihan directory.
+
+
+4.	Form Save File
+
+Form save file memiliki fungsi yang hampir sama dengan form open file. Jika pada form open file berguna untuk membuka file, maka form save file berguna untuk menyimpan file hasil proses kompresi atau dekompresi dengan cara menelusuri directory tertentu pada komputer. Form save file dirancang seperti pada gambar 3.17 berikut ini.
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gambar 3.17 Rancangan Interface Form Save File
+
+Proses penyimpanan lewat form ini merupakan aternatif dari penyimpanan otomatis seperti yang telah dijelaskan pada proses pertama. Proses ini merupakan proses terakhir dari proses kompresi/dekompresi file.
+
+
+3.4	Implementasi Sistem 
+
+Setelah perancangan sistem selesai dilakukan, maka tahap selanjutnya adalah implementasi sistem. Hasil rancangan tersebut akan diimplementasikan menjadi sebuah aplikasi bebasis desktop yang dibangun dengan bahasa pemrograman Delphi. Agar tahap pengimplementasian lebih teratur, maka tahap ini dilakukan dengan mengikuti jejak proses pada saat perancangan. Sedangkan, untuk memudahkan penjelasan, maka diambil 1 (satu) buah sample file yang akan dikompresi yaitu cp_licence.txt yang berisis karakter-karakter ASCII dengan ukuran 18.1 KB. Output dari proses kompresi ini adalah file dengan tipe .lzw untuk algoritma LZW, tipe .ac utnuk algoritma Arithmetic Coding, tipe .rle+bwt untuk algoritma RLE dan BWT. 
+
+3.4.1 Form Utama Aplikasi
+Sesuai dengan hasil rancangan pertama pada perancangan interface, maka interface form utama pada gambar 3.13 diimplementasikan seperti pada gambar 3.18 berikut ini.
+ 
+
+Gambar 3.18 Implementasi Form Utama Aplikasi
+
+
+3.4.2 Form Pengaturan Directory Penyimpanan File Hasil Kompresi dan         Dekompresi
+
+Setelah tampilan utama aplikasi muncul, maka tahap selanjutnya adalah melakukan pengaturan directory penyimpanan file hasil proses kompresi dan dekompresi melalui menu customize pada submenu option atau langsung dari toolbar seperti diperlihatkan pada gambar 3.19 berikut ini.
+
+
+
+	 
+
+
+
+
+Gambar 3.19 Pemilihan Submenu Option
+Tujuan pemilihan menu pada gambar 3.19 di atas adalah untuk mengingat lokasi penyimpanan file hasil proses kompresi dan dekompresi agar proses penyimpanan dapat dilakukan secara otomatis pada lokasi tersebut. Jadi, setelah mengklik submenu option, maka akan muncul form option seperti pada gambar 3.20 berikut ini.
+
+
+
+
+
+
+
+
+
+
+
+Gambar 3.20 Form Pengaturan Directory File Hasil Kompresi dan Dekompresi
+
+Gambar 3.20 di atas menunjukkan bahwa setelah proses kompresi maupun dekompresi selesai maka file hasil kompresi akan disimpan pada directory C:\Result\Compressed sedangkan file hasil dekompresi disimpan pada directory C:\Result\Decompressed. 
+
+
+3.4.3 Form Open File
+
+Setelah pengaturan lokasi penyimpanan selesai, maka tahap selanjutnya adalah pengompresian file dengan cara terlebih dahulu membuka file melalui form open file. Form ini sendiri dapat diakses lewat menu file pada submenu open file atau langsung pada button toolbar. 
+
+Pada kasus ini file yang akan dicoba untuk dikompresi adalah file cp_licence.txt yang terdapat pada folder ac_corpus seperti ditunjukkan pada gambar 3.21 berikut ini.
+
+ 
+Gambar 3.21 Proses Pembukaan File cp_licence.txt
+
+
+Dengan mengklik tombol open, maka informasi file akan segera ditampilkan pada bagian file information dari aplikasi utama seperti pada gambar 3.22 berikut ini.
+
+
+ 
+Gambar 3.22 Informasi File cp_licence.txt
+
+
+Dengan munculnya informasi file seperti pada gambar 3.22 di atas, berarti file tersebut telah berhasil di-copy (disalin) pada buffer, sehingga siap untuk dikompresi dengan mengklik salah satu atau lebih button yang mengimplementasikan ketiga algoritma pada bagian button dari aplikasi utama. Dalam hal ini, dicoba mengompresi file tersebut dengan ketiga algoritma yang tersedia, sehingga diperoleh hasil pengompresian seperti gambar 3.33 berikut ini.
+ 
+Gambar 3.33 Hasil Pengompression File cp_licence.txt
+
+Gambar 3.33 di atas menunjukkan bahwa pengompresian file cp.licence.txt dengan ukuran 18.582 bytes telah berhasil dilakukan dengan menggunakan ketiga algoritma seperti ditampilkan pada bagian statistic grid dari aplikasi utama ini, dimana algoritma Lempel-Ziv Welch memiliki rasio kompresi sebesar 58,5% dengan waktu eksekusi 0,875 detik, Arithemtic Coding sebesar 62,25% dengan waktu eksekusi 1,234 detik, sedangkan algoritma RLE rasio kompresinya hanya 68,51% dengan waktu eksekusi terlama yaitu 3,515 detik.  Jadi, dapat disimpulkan bahwa algoritma yang terbaik untuk mengompresi file tersebut adalah algoritma LZW, disusul Arithmetic Coding, kemudian RLE.
+
+
+3.4.4 Form Save File
+
+Meskipun sebenarnya file hasil kompresi telah tersimpan secara otomatis pada saat proses kompresi selesai, namun adakalnya user tertentu ingin menyimpan file tersebut dengan nama dan directory lain secara berubah-ubah. Untuk melakukan ini, maka dapat digunakan form save file yang dapat diakses dari menu file atau langsung dari toolbar sehingga akan muncul form save seperti pada gambar 3.34 berikut.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Gambar 3.34 Penyimpanan File Hasil Kompresi Secara Manual
+
+Jadi, dengan menelusuri directory penyimpanan hasil proses kompresi, maka akan diperoleh file-file terkompresi seperti pada gambar 3.35 dengan ekstensi dan ukuran yang berbeda sesuai dengan algoritma yang telah digunakan.
+
+ 
+Gambar 3.35 File-File Hasil Kompresi
+
+
+Proses dekompresi, memiliki prosedur yang sama dengan proses kompresi. Hanya saja,  pada dekompresi file yang dibuka adalah file-file terkompresi seperti pada gambar 3.35 di atas, kemudian didekompresi dan disimpan sebagai file asli.
+
+
+BAB 4
+
+ANALISIS DAN PENGUJIAN SISTEM
+
+
+
+Pada bab ini akan dilakukan pembandingan kompleksitas masing-masing algoritma untuk proses kompresi dan dekompresi, serta pengujian sistem agar dapat dilakukan analisis statistik untuk menemukan perbandingan waktu proses kompresi/dekompresi, serta rasio kompresi dari setiap algoritma.
+
+
+4.1	Analisis Perbandingan Kompleksitas Algoritma
+
+Kompleksitas yang akan dibandingkan di sini adalah total kompleksitas algoritma untuk proses kompresi dan dekompresi yang telah diperoleh pada bab 3. 
+
+
+4.1.1	Kompleksitas Proses Kompresi
+
+Perbandingan kompleksitas proses kompresi masing-masing algoritma dapat dilihat pada tabel 4.1 berikut.
+
+Tabel 4.1 Perbandingan Kompleksitas Proses Kompresi
+Algoritma	Kompleksitas	Big-O
+LZW	25Dn-1912n+16*2log Dn+1720	O(Dn)
+Arithmetic Coding	8MUn+20Mn+991n+11799	O(MUn)
+RLE+BWT	24n2+16n*2log n+62n-21	O(n2)
+
+Keterangan:
+D	:  besar dictionary yang digunakan. 
+M	:  banyak perulangan untuk pemeriksaan MSB untuk setiap iterasi.
+U	:  banyak perulangan untuk kondisi underflow untuk setiap iterasi.
+	n	:  ukuran buffer (banyak karakter yang akan dikodekan).
+			Pada saat implementasi, setiap variabel kecuali n terbatas pada nilai tertentu. Untuk algoritma LZW, besar dictionary (variabel D) telah ditentukan dari 8 bit – 12 bit (256 – 4096 buah index), sedangkan nilai M dan U sangat sulit ditentukan secara pasti untuk setiap iterasi, tetapi dapat dipastikan nilai tersebut jauh lebih kecil daripada nilai n. Walaupun demikian, karena implementasi algoritma Arithmetic Coding menggunakan 16 bit bilangan integer, maka dapat diasumsikan pemeriksaan MSB rata-rata sebesar 16 kali untuk setiap pengkodean, hal ini dapat diterima karena sebenarnya variabel low dan high pada encoder hanya menampung nilai sebesar 16 bit, dan setiap kali MSB variabel tersebut sama disitu pula dilakukan penambahan bit yang berbeda pada LSB. Nilai U juga memiliki kasus yang hampir mirip dengan M, yaitu akan dilakukan penambahan bit pada LSB setiap kali terdapat bit penyebab underflow, sehingga dengan asumsi ke-16 bit dalam kondisi underflow, maka pemeriksaan rata-rata juga sebesar 16 kali untuk setiap pengkodean (iterasi).
+
+		Jadi, untuk merperkirakan running time ketiga algoritma di atas, maka dicoba diasumsikan panjang buffer (n) = 100000, D yang diambil adalah nilai terbesar, sedangkan M dan U adalah 16, sehingga diperoleh tabel 4.2 berikut.
+
+Tabel 4.2 Perbandingan Running Time Algoritma
+Algoritma	Asumsi Variabel	Kompleksitas
+	Running Time
+LZW	D=4096	O(Dn) 	409600000
+Arithmetic Coding	M=16, U=16	O(MUn) 	25600000
+RLE+BWT	-	O(n2) 	10000000000
+
+	Seperti yang diperlihatkan pada tabel 4.2 di atas, algoritma yang tercepat berdasarkan kompleksitasnya (running time) adalah Arithmetic Coding, LZW, kemudian RLE+BWT. Meskipun demikian, perbandingan ini bukanlah “harga” yang mutlak untuk setiap implementasi, karena pola masukan juga turut mempengaruhi kecepatan proses kompresi. Untuk itu, algoritma tersebut perlu diimplementasikan untuk kesimpulan yang lebih akurat. Algoritma RLE+BWT menjadi algoritma yang terlambat karena disebabkan transformasi BWT yang harus merotasikan dan mengurutkan string secara lexicographic sebanyak n kali, dimana proses pengurutan dilakukan dengan cara membandingkan karakter demi karakter sebanyak n kali pula sampai karakter tersebut berbeda.
+
+
+4.1.2	Kompleksitas Proses Dekompresi
+
+Untuk proses dekompresi, perbandingan kompleksitas masing-masing algoritma dapat dilihat pada tabel 4.3 berikut.
+
+Tabel 4.3 Perbandingan Kompleksitas Proses Dekompresi
+Algoritma	Kompleksitas	Big-O
+LZW	324n+304n/B+18B+1476	O(n)
+Arithmetic Coding	433Mn+4047n+8073	O(Mn)
+RLE+BWT	23n2+16n*2log n+81n-66	O(n2)
+
+Keterangan:
+B	:  panjang bit yang sedang digunakan.
+M	:  banyak perulangan untuk pemeriksaan MSB untuk setiap iterasi.
+  n	:  ukuran buffer (banyak karakter yang akan dikodekan).
+
+Sama halnya seperti kompleksitas untuk kompresi, setiap variabel kecuali n juga terbatas pada nilai tertentu saat implementasi, dimana panjang B merupakan konsistensi dari besar dictionary yang telah digunakan yaitu 8 bit – 12 bit, M juga dapat diasumsikan 16 bit seperti pada saat proses kompresi. Jadi, algoritma dekompresi yang tercepat dilihat dari segi kompleksitasnya adalah LZW, Arithmetic Coding, kemudian RLE+BWT. 
+
+Khusus untuk dekompresi RLE+BWT, tidak ada lagi proses rotasi yang dilakukan seperti proses kompresi, melainkan hanya melakukan pengurutan karakter (bukan string) terhadap masukan sebanyak n kali. Jadi, proses dekompresi algoritma RLE+BWT maupun LZW dan Arithmetic Coding lebih cepat daripada proses kompresinya.
+4.2	Pengujian Implementasi Algoritma dan Analisis Hasil
+
+Pada subbab ini, akan dilakukan pengujian terhadap aplikasi hasil implementasi dari perancangan algoritma pada bab 3 untuk melihat apakah aplikasi tersebut dapat melakukan proses kompresi maupun proses dekompresi terhadap file. Kemudian akan dilakukan analisa terhadap hasil proses tersebut, sehingga dapat diketahui perbandingan waktu serta rasio kompresi dari setiap algoritma
+
+
+4.2.1	Perangkat Pengujian
+
+Adapun perangkat yang digunakan untuk pengujian ini adalah sebuah komputer (PC) dengan spesifikasi:
+
+Sistem Operasi	:  Microsoft Windows XP Professional
+Prosesor	:  Intel (R) Celeron (R) CPU 2.00 GHz (Pentium IV)
+Memori	:  256 MB RAM
+Hardisk	:  80 GB
+
+Untuk proses pengujian, komputer akan dihidupkan dalam keandaan standar yaitu dengan menonaktifkan antivirus, antispyware, firewall, maupun aplikasi-aplikasi lain, sehingga resource komputer hanya fokus pada pengujian aplikasi ini saja.
+
+
+4.2.2	File Pengujian
+
+File-file yang akan digunakan untuk pengujian adalah file yang sebagian besar diambil dari cantegury corpus, calgary corpus dan file lain. Cantegury corpus adalah koleksi file-file yang sengaja dibuat untuk pengujian algoritma data kompresi lossless yang diciptakan pada tahun 1997 di Universitas Canterbury, New Zealand dan merupakan pengganti dari calgary corpus (wikepedia, 2010). Namun, karena file-file cantegury corpus terdiri dari berbagai tipe, maka yang diambil adalah file-file plain text ASCII tipe .txt saja dengan berbagai ukuran dan pola masukan. Berikut rincian dari file-file yang akan digunakan dalam pengujian.
+
+
+Tabel 4.4 File Pengujian Plain Text ASCII
+No	Nama File	Ukuran	Keterangan
+1	byte vs bit - 1000 bin(a).txt	8,001 bytes	Merupakan file berisi kumpulan biner dari konversi karakter “a” sebanyak 1000 kali (bagian dari calgary corpus).
+2	10000 chr(150).txt	10,001 bytes	Merupakan file yang berisi konversi bilangan 150 menjadi karakter ASCII (karakter “-“)  sebanyak 10000 karakter (bagian dari calgary corpus).
+3	fields.c.txt	11,151 bytes	Source code dalam bahasa C yang mengandung perintah-perintah yang umum digunakan pada pemrograman (bagian dari cantegury corpus).
+4	cp.html.txt	24,604 bytes	Kode HTML dari halaman “Compression Pointers” (bagian dari cantegury corpus).
+5	GNU Licence.txt	35,631 bytes	Merupakan file berisi text lisensi yang sering disertakan pada software-software gratis atau berlisensi.
+6	myscode.txt	62,804 bytes	Source code untuk membangun aplikasi ini dalam bahasa Delphi.
+7	10000 bin(150).txt	80,161 bytes	Merupakan file yang berisi bilangan biner hasil konversi bilangan desimal 150 sebanyak 10000 kali  (bagian dari calgary corpus).
+8	aaa.txt	100,001 bytes	Merupakan file yang isinya kumpulan karakter “a” (bagian dari cantegury corpus)
+9	alphabet.txt	100,001 bytes	Merupakan file yang berisi alpabet dari karakter a-z yang ditulis sampai beberap kali. (bagian dari cantegury corpus).
+10	random.txt	100,001 bytes	File yang berisi karakter alpabet dan angka yang tidak beraturan (random) (bagian dari cantegury  corpus).
+11	asyoulik.txt	125,180 bytes	Merupakan teks berbahasa inggris “As You Like” dengan struktur yang tidak teratur (tanpa paragraph, dan tanpa baris) (bagian dari cantegury corpus) 
+12	unix manpage g++.txt	136,900 bytes	Bagian halaman manual dari sistem Unix. (bagian dari cantegury corpus).
+13	alice29.txt	152,089 bytes	Merupakan teks berbahasa inggris “Alice's Adventures In Wonderland” (bagian dari cantegury corpus)
+14	pi.txt	156,578 bytes	File yang berisi karakter-karakter angka yang tidak beraturan (bagian dari cantegury corpus)
+15	myskripsi.txt	162,504 bytes	Plain text skripsi ini yang berisi bab 1- bab 4 (tanpa gambar).
+
+
+
+
+
+4.2.3	Pengujian Dictionary Algoritma LZW
+
+Pada saat pengujian, algoritma LZW memiliki ukuran dictionary yang beragam yang dapat dipilih, yaitu: 256, 512, 1024, 2048 dan 4096. Karena ukuran dictionary ini juga turut mempengaruhi kecepatan maupun rasio kompresi, maka perlu dilakukan pengujian untuk mengetahui pada dictionary mana algoritma tersebut memilki performansi yang baik untuk berbagi ukuran dan struktur file. Jadi, sebelum dibandingkan dengan algoritma Arithmetic Coding dan RLE+BWT, maka algoritma LZW ini akan terlebih dahulu dibandingkan untuk berbagai ukuran dictionary nya, kemudian hanya akan mengambil perfomansi yang terbaik untuk proses pembandingan selanjutnya. Perfomansi yang baik diukur dari rata-rata waktu dan rasio kompresi yang dihasilkan dari proses pengompresian. Semakin kecil rata-rata waktu dan rasio kompresinya, maka semakin baik perfomansi algoritma tersebut.
+
+	File uji yang akan digunakan adalah lima buah file yang dipilih dari tabel 4.4 yang merupuakan perwakilan file uji secara keseluruhan baik dari segi ukuran maupun dari segi pola masukan. File-file tersebut yaitu: 10000 bin(150).txt, 10000 chr(150).txt, alice29.txt, myscode.txt, dan random.txt. Berikut tabel perbandingan rasio kompresi untuk berbagai ukuran dictionary.
+
+Tabel 4.5 Perbandingan Rasio Kompresi Dictionary LZW
+Ukuran
+File 1	Ukuran Dictionary
+	256	512	1024	2048	4096
+	Rasio
+Kompresi2	Rasio Kompresi2	Rasio Kompresi2	Rasio Kompresi2	Rasio Kompresi2
+10,001	100,12	1,72	1,92	2,10	2,28
+62,804	100,02	76,95	65,06	58,23	46,71
+80,161	100,01	3,70	1,90	1,95	2,12
+100,001	100,01	106,36	107,39	102,26	93,63
+152,089	100,01	68,86	57,94	51,16	47,56
+Rata-Rata3	100,03	51,52	46,84	43,14	38,46
+
+Keterangan:
+1Ukuran file dalam satuan byte.
+2Rasio kompresi dalam satuan %.
+3Rata-rata rasio kompresi dalam satuan %.
+	Dalam bentuk grafik, hasil pengujian perbandingan rata-rata rasio kompresi pada tabel 4.5 ditunjukkan seperti pada gambar 4.1 berikut ini. 
+
+ 
+Gambar 4.1 Grafik Perbandingan Rata-Rata Rasio Kompresi Dictionary LZW
+
+Seperti diperlihatkan pada tabel 4.5 dan grafik pada gambar 4.1, ukuran dictionary 256 sangat buruk untuk semua file uji dengan rata-rata rasio kompresi di atas 100%, hal ini disebabkan karena dictionary tersebut hanya berisi karakter ASCII saja, sehingga tidak dapat mengkodekan pasangan karakter (string). Sedangkan untuk ukuran dictionary lainnya, rata-rata rasio kompresinya meningkat seiring bertambah besarnya ukuran dictionary, meskipun selisih rasionya tidak terlalu besar. Peningkatan rasio ini terjadi karena semakin banyak kemungkinan pola karakter yang dapat dikodekan. Jadi, untuk sementara, ukuran dictionary yang terbaik berdasarkan rasio kompresinya adalah 4096 yaitu dengan rata-rata rasio kompresi 38,46%, dimana ukuran ini hampir mampu mengompresi berbagai ukuran file dikala ukuran lain rasionya sangat buruk seperti pada saat mengompresi file yang ukurannya 100,001 byte (random.txt). 
+
+Sedangkan perbandingan waktu untuk proses kompresi dan dekompresi algoritma LZW berdasarkan panjang dictionary-nya diperlihatkan pada tabel 4.6 berikut.
+
+Tabel 4.6 Perbandingan Waktu Kompresi/Dekompresi Dictionary LZW
+Ukuran
+File1	Ukuran Dictionary
+	256	512	1024	2048	4096
+	LK	KD	LK	LD	LK	LD	LK	LD	LK	LD
+10,001	1,00	0,16	0,03	0,00	0,03	0,00	0,05	0,00	0,05	0,00
+62,804	40,45	0,92	17,19	1,34	8,17	1,00	5,77	0,94	10,69	0,59
+80,161	80,52	1,11	0,41	0,38	0,89	0,06	1,20	0,13	1,19	0,13
+100,001	125,66	1,45	114,36	3,95	107,84	30,69	112,52	3,64	125,83	3,66
+152,089	289,76 	81,09	71, 77	5,13	58,27	16,63	11,48	2,55	23,03	2,23
+Rata-Rata2	107,48	16,95	26,40	2,16	35,04	9,68	26,20	1,45	32,16	1,32
+
+Keterangan:
+LK :  Lama kompresi dalam satuan detik.
+LD :  Lama dekompresi dalam satuan detik.
+1Ukuran file dalam satuan byte.
+2Rata-rata waktu proses kompresi/dekompresi dalam satuan detik.
+
+ 
+Gambar 4.2 Grafik Perbandingan Rata-Rata Waktu K/D Dictionary LZW
+
+Berdasarkan hasil pengujian pada tabel 4.6 dan grafik pada gambar 4.2 di atas, ditunjukkan bahwa proses dekompresi untuk setiap ukuran dictionary jauh lebih cepat daripada proses kompresinya, karena pada saat proses dekompresi kode yang sedang dicari selalu ditemukan pada dictionary tanpa harus menjajaki index demi index isi dictionary. Namun, jika ukuran tersebut saling dibandingkan maka waktu yang tercepat untuk proses kompresi adalah pada ukuran dictionary 2048, namun waktu dekompresinya menjadi peringkat kedua setelah waktu dekompresi dictionary 4096 dengan selisih yang sangat kecil. Jadi, dengan mempertimbangkan rata-rata waktu dan rasio kompresi setiap ukuran dictionary dari tabel 4.5 dan tabel 4.6, maka dilakukan proses perengkingan dengan menjumlahkan rata-rata rasio kompresi dengan rata-rata waktu proses pengompresian, dimana semakin kecil rangkingnya maka semakin baik ukuran dictionary tersebut. Hasil perengkingan setiap dictionary ditunjukkan pada tabel 4.7 berikut ini.
+
+Tabel 4.7 Perbandingan Rangking Dictionary LZW
+Ukuran Dictionary	Rata-Rata
+Rasio Kompresi1	Rata-Rata
+Waktu Proses	Rangking
+		Kompresi2	Dekompresi3	
+256	100,03	107,48	16,95	224,46
+512	51,52	26,40	2,16	80,08
+1024	46,84	35,04	9,68	91,56
+2048	43,14	26,20	1,45	70,80
+4096	38,46	32,16	1,32	71,94
+
+Keterangan:
+1Rata-rata rasio kompresi dalam satuan %.
+2Rata-rata waktu proses kompresi dalam satuan detik.
+3Rata-rata waktu proses dekompresi dalam satuan detik.
+ 
+Gambar 4.3 Grafik Perbandingan Rangking Dictionary LZW
+Berdasarkan rangking yang diperoleh pada tabel 4.7 dan grafik pada gambar 4.3, maka dictionary 2048 adalah pemenangnya dengan rangking 70.80, beda tipis dengan rangking dictionary 4096 (71,94).  Padahal pada saat analisis rasio, dictionary 4096 adalah yang terunggul.  Namun, beruntung dictionary 2048 memiliki waktu kompresi yang cukup jauh lebih cepat daripada dictionary 4096, sehingga waktu tersebut dapat menutupi kelemahan di rasio kompresinya bahkan sampai mengantarkannya ke peringkat teratas. 
+
+Karena dictionary 4096 ternyata lebih banyak mengorbankan waktu untuk mencapai rasio yang lebih baik, maka dictionary tersebut harus puas berada pada posisi ke-dua. Jadi, perfomansi terbaik algoritma LZW adalah saat menggunakan dictionary 2048 (11 bit). Untuk selanjutnya, ukuran dictionary tersebut yang akan digunakan untuk proses perbandingan algoritma.
+
+
+4.2.4	Pengujian Algoritma
+
+Setelah ukuran dictionary algoritma LZW yang paling optimal diperoleh, maka algoritma tersebut kembali diuji beserta dua algoritma lainnya, yaitu: Arithmetic Coding (AC) dan RLE+BWT untuk melihat bagaimana perbandingan rasio kompresi serta waktu yang dibutuhkan selama proses kompresi dan dekompresi.
+
+	File yang akan digunakan untuk pengujian ketiga algoritma di atas adalah seluruh file yang telah diberikan pada tabel 4.4. Hasil pengujian kemudian akan dituangkan dalam bentuk tabel dan grafik untuk memudahkan proses analisis. Analisis ini bertujuan untuk melihat bagaimana karakteristik atau ukuran suatu file dapat mempengaruhi kinerja algoritma baik dari segi waktu maupun dari segi rasio kompresi. Dengan demikian, perbandingan setiap algoritma untuk file tersebut dapat diketahui.
+
+	Perbandingan rasio kompresi hasil pengujian ketiga algoritma ditunjukkan pada tabel 4.8 dan grafik pada gambar 4.4 berikut.
+
+Tabel 4.8 Perbandingan Rasio Kompresi Algoritma
+Nama File	Ukuran
+File Asli1	LZW	AC	RLE+BWT
+		Hasil1	Rasio2	Hasil1	Rasio2	Hasil1	Rasio2
+byte vs bit-1000 .txt	8.001	496	6,20	1488	18,60	8.009	100,10
+10000 chr(150).txt	10.001	210	2,10	532	5,32	16	0,16
+fields.c.txt	11.151	5.893	52,85	7.608	68,23	6.138	55,04
+cp.html.txt	24.604	12.938	52,58	16.707	67,90	14.178	57,62
+GNU Licence.txt	35.631	18.495	51,91	21.196	59,49	22.835	64,09
+myscode.txt	62.804	36.571	58,23	40.537	64,55	28.471	45,33
+10000 bin(150).txt	80.161	1.560	1,95	10.555	13,17	80.169	100,01
+aaa.txt	100.001	631	0,63	535	0,53	17	0,02
+alphabet.txt	100.001	3221	3,22	59.338	59,34	166	0,17
+random.txt	100.001	102.263	102,26	75.653	75,65	100.009	100,01
+asyoulik.txt	125.180	68.367	54,61	75.858	60,60	88.359	70,59
+unix mpage g++.txt	136.900	72.433	52,91	78.734	57,51	74.627	54,51
+alice29.txt	152.089	77.803	51,16	87.455	57,50	99.986	65,74
+pi.txt	156.578	74.332	47,47	65.577	41,88	156.586	100,01
+myskripsi.txt	180.000						
+Rata-Rata3							
+
+Keterangan:
+1Ukuran file dalam satuan byte.
+2Rasio kompresi dalam satuan %.
+3Rata-rata rasio kompresi dalam satuan %.
+ 
+Gambar 4.4 Grafik Perbandingan Rasio Kompresi Algoritma
+Dari hasil pengujian pada tabel 4.8 dan grafik  pada gambar 4.4 ditunjukkan bahwa hampir semua algoritma mencapai rasio kompresi yang cukup baik untuk berbagai ukuran dan pola file, kecuali algoritma RLE+BWT untuk file uji 10000 bin(150).txt, byte vs bit-1000.txt, pi.txt, dan random.txt, dan algoritam LZW untuk file uji random.txt, dimana rasio kompresinya rata-rata di atas 100% (ukuran hasil kompresi lebih besar dari ukuran semula). Hal ini disebabkan karena keberadaan karakter-karakter pada file tersebut kurang beraturan. Jadi, meskipun terlebih dahulu ditransformasi oleh BWT, hasilnya tetap juga tidak maksimal karena memang sifat transformasi ini umumnya mengelompokkan karakter-karakter yang sering muncul pada posisi yang tidak terlalu berjauhan, sementara RLE hanya memanfaatkan deretan-deretan karakter yang sama secara berurutan. 
+
+Walaupun demikian, disisi lain keunggulan algoritma RLE+BWT sangat mendominasi jika berhadapan dengan file yang tingkat kesamaan karakternya tinggi, seperti pada file uji 10000 chr(150).txt, aaa.txt, dan alphabet.txt dengan rasio yang bahkan mencapai 0.02%, artinya hampir semua isi file terkodekan dengan baik. Sedangkan untuk file-file berisi teks biasa yang seharusnya buruk untuk RLE, akhirnya dapat dikompresi hingga rata-rata mencapai 50% berkat bantuan algoritma BWT sehingga algoritma tersebut tidak terlalu jauh kalah dengan algoritma LZW maupun Arithmetic Coding.
+
+Algoritma LZW sedemikian buruk untuk file uji random.txt karena karakter-karakter file tersebut sangat acak, sehingga kemungkinan munculnya suatu pola karakter secara berulang-ulang sangat minim. Namun, hampir untuk semua file uji rasio algoritma ini yang terbaik. Sedangkan untuk algoritma Arithmetic Coding meskipun jarang “menang”, namun rasio kompresinya selalu konsisten untuk semua file uji, hal ini disebabkan karena algoritma ini bekerja berdasarkan probalitas kemunculan karakter, dimana karakter yang sering muncul direpresentasikan dengan kode yang lebih pendek sehingga pola ataupun susunan karakter dalam suatu file tidak terlalu berpengaruh terhadap kinerja algoritma tersebut.
+
+Sedangkan untuk waktu proses kompresi dan dekompresi hasil pengujian, diberikan pada tabel 4.9 dan grafik pada gambar 4.5 berikut.
+Tabel 4.9 Perbandingan Waktu Kompresi dan Dekompresi Algoritma
+Nama File	Ukuran
+File Asli1	LZW	AC	RLE+BWT
+		K2	D3	K2	D3	K2	D3
+byte vs bit-1000 .txt	8.001	0,03	0,02	0,34	0,42	0,50	0,06
+10000 chr(150).txt	10.001	0,03	0,00	0,30	0,41	1,08	0,09
+fields.c.txt	11.151	0,50	0,09	0,67	0,69	0,59	0,13
+cp.html.txt	24.604	1,22	0,25	1,55	1,66	5,67	0,45
+GNU Licence.txt	35.631	1,97	0,38	2,30	2,41	13,58	0,89
+myscode.txt	62.804	5,80	0,67	5,27	4,42	42,47	2,61
+10000 bin(150).txt	80.161	1,03	0,41	3,50	4,30	106,22	4,13
+aaa.txt	100.001	1,59	0,06	3,08	4,19	178,64	6,38
+alphabet.txt	100.001	1,56	0,27	9,50	7,17	101,98	6,22
+random.txt	100.001	74,67	2,86	13,63	7,47	113,19	6,25
+asyoulik.txt	125.180	8,41	2,06	14,86	9,39	116,95	9,69
+unix mpage g++.txt	136.900	14,30	1,94	18,13	10,08	212,33	12,11
+alice29.txt	152.089	12,02	2,11	18,74	10,45	264,58	14,41
+pi.txt	156.578	9,09	2,33	13,66	10,50	281,13	15,33
+myskripsi.txt	180.000						
+Rata-Rata4							
+ 
+Keterangan:
+1Ukuran file dalam satuan byte.
+2Lama proses kompresi dalam satuan detik.
+3Lama proses dekompresi dalam satuan detik.
+4Rata-rata waktu proses kompresi/dekompresi dalam satuan detik.
+ 
+Gambar 4.5 Grafik Perbandingan Waktu Kompresi Algoritma
+ 
+Gambar 4.6 Grafik Perbandingan Waktu Kompresi Algoritma
+
+
+Tabel 4.9 dan grafik pada gambar 4.5 menunjukkan bahwa untuk proses kompresi, algoritma yang paling lambat untuk semua file uji adalah algoritma RLE+BWT dimana pertumbuhan waktunya semakin meningkat seiring bertambah besarnya ukuran file. Seperti yang telah dijelaskan sebelumnya, lambatnya algoritma ini sebenarnya disebabkan oleh transformasi yang harus mengurutkan string secara lexicographic. Namun, pada saat mengompresi file alpabet.txt, random.txt dan asyoulik.txt, waktu kompresi algoritma tersebut mendadak turun, hal ini disebabkan karena file tersebut memiliki banyak karakter yang beragam pada posisi yang tidak terlalu berjauhan, sehingga pada saat pengurutan string, proses pembandingan karater lebih cepat dilakukan. Sedangkan waktu yang tercepat untuk hampir semua file uji adalah algoritma LZW. Namun pada saat LZW mengompresi file random.txt kecepatannya mendadak turun. Hal ini telah membuktikan bahwa LZW memang sangat buruk untuk file yang tidak beraturan baik dilihat dari segi rasio maupun dari segi waktu. Untuk algoritma Arithmetic Coding, meskipun kalah beda tipis dengan kecepatan kompresi LZW, namun waktunya merupakan yang paling stabil untuk semua file uji, dimana peningkatan ukuran maupuan struktur file tidak terlalu berpengaruh terhadap kecepatannya.
+
+	Sedangkan untuk proses dekompresi seperti diperlihatkan pada garfik 4.6, waktu yang tercepat adalah mutlak di “tangan” LZW untuk semua file uji dengan pertumbuhan waktu yang sangat minim. Sedangkan waktu dekompresi algoritma RLE+BWT cukup memuaskan ketimbang waktu kompresinya yaitu hampir mampu menyaingi kecepatan Arithemetic Coding untuk file uji dibawah 100,000 bytes. Jadi, untuk setiap algoritma proses dekompresinya jauh lebih cepat daripada proses kompresi, karena dipengaruhi beberapa faktor, seperti ukuran file terkompresi yang lebih kecil atau perbedaan metode yang digunakan pada saat dekompresi.
+
+	Jadi, untuk menentukan perfomansi algoritma berdasarkan rasio dan waktu kompresi, maka akan dilakukan perengkingan seperti yang telah dilakukan pada saat pengujian dictionary LZW, yaitu dengan menjumlahkan rata-rata rasio kompresi setiap algoritma dengan rata-rata waktu kompresi dan dekompresinya, dimana semakin kecil rangkingnya maka semakin baik performansi algoritma tersebut, dan sebaliknya. Perbandingan rangking setiap algoritma ditunjukkan pada tabel 4.10 berikut ini.
+
+Tabel 4.10 Perbandingan Rangking Algoritma Kompresi
+Algoritma	Rata-Rata
+Rasio Kompresi1	Rata-Rata
+Waktu Proses	Rangking
+		Kompresi2	Dekompresi3	
+LZW				
+AC				
+RLE+BWT				
+
+Keterangan:
+1Rata-rata rasio kompresi untuk semua file uji dalam satuan %.
+2Lama proses kompresi dalam satuan detik.
+3Lama proses dekompresi dalam satuan detik.
+
+
+
+
+
+Jadi, berdasarkan tabel dan grafik di atas maka algoritma yang terbaik berdasarkan rata-rata rasio kompresi dan waktu untuk ke-15 file uji pada tabel x adalah algoritma Lempel Ziv Welch (LZW).
+ 
+ 
+ 
+ÿ

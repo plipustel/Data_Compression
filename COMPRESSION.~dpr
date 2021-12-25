@@ -1,0 +1,20 @@
+program COMPRESSION;
+
+uses
+  Forms,
+  uMAIN in 'uMAIN.pas' {frmMAIN},
+  functions in 'functions.pas',
+  uOPTION in 'uOPTION.pas' {frmOPTION},
+  uTREEVIEW in 'uTREEVIEW.pas' {frmTREEVIEW},
+  uABOUT in 'uABOUT.pas' {Form1};
+
+{$R *.res}
+
+begin
+  Application.Initialize;
+  Application.CreateForm(TfrmMAIN, frmMAIN);
+  Application.CreateForm(TfrmOPTION, frmOPTION);
+  Application.CreateForm(TfrmTREEVIEW, frmTREEVIEW);
+  Application.CreateForm(TForm1, Form1);
+  Application.Run;
+end.
