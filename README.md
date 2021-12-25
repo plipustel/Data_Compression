@@ -4,7 +4,7 @@ As a final project to complete my Bachelor Degree in Computer Science @2011 in U
 
 @Implemented By : Plipus Telaumbanua (plipus.tel@gmail.com)
 @Year : 2010 - 2021 @Computer Science Department University of Sumatera Utara
-@Technologies: Borland Delphi 7.0
+@Technologies: Borland Delphi 7.0 - Pascal
 @Lossless Data Compression Algorithms:
 - Lempel Ziv Welch
 - Arithmetic Coding
