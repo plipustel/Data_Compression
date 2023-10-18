@@ -6,7 +6,7 @@
 {* Author : Plipus Telaumbanua                                                 *}
 {* 061401006                                                                   *}
 {* philipstel@gmail.com                                                        *}
-{* http://www.pilipstel.web.id                                                 *}
+{* http://www.plipustel.com                                                    *}
 {*                                                                             *}
 {* Computer Science                                                            *}
 {* University of North Sumatera                                                *}
